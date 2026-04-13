@@ -27,7 +27,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
 .gnb-nav { display: flex; height: 80px; }
 .gnb-nav-item { padding: 0 28px; display: flex; align-items: center; font-size: 16px; color: var(--tm); cursor: pointer; transition: color 0.1s; border-bottom: 2px solid transparent; }
 .gnb-nav-item:hover { color: var(--p); }
-.gnb-nav-item.act { color: var(--p); font-weight: 500; border-bottom: 2px solid var(--p); }
+.gnb-nav-item.act { color: var(--p); font-weight: 500; border: 2px solid var(--p); }
 .gnb-right { display: flex; align-items: center; gap: 14px; }
 .gnb-search { background: var(--pl); border-radius: 20px; height: 40px; padding: 0 16px; display: flex; align-items: center; gap: 10px; width: 280px; cursor: pointer; }
 .gnb-icon-btn { width: 40px; height: 40px; background: var(--pl); border-radius: 20px; cursor: pointer; }
@@ -233,15 +233,15 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
     </div>
   </div>
   <div class="r fill" style="overflow:hidden;">
-    <div class="map-area">
-      <div style="position:absolute;top:24px;left:24px;display:flex;gap:12px;">
+    <div class="map-area" style="align-items:flex-start;justify-content:flex-start;padding:32px;">
+      <span style="font-size:28px;color:var(--tl);">[ 지도 영역 ]</span>
+      <div style="display:flex;gap:14px;align-items:center;padding:20px 0;flex-wrap:wrap;">
         <div class="map-marker" style="background:var(--p);color:white;" onclick="goTo(4)">치즈 ★4.8</div>
         <div class="map-marker" style="background:var(--bw);color:var(--td);" onclick="goTo(4)">나비 ★4.5</div>
         <div class="map-marker" style="background:var(--bw);color:var(--td);" onclick="goTo(4)">고등어 ★4.2</div>
         <div class="map-marker" style="background:var(--bw);color:var(--td);" onclick="goTo(4)">삼색이 ★4.0</div>
         <div class="map-marker" style="background:var(--bw);color:var(--td);" onclick="goTo(4)">호랑이 ★3.9</div>
       </div>
-      <span style="font-size:28px;color:var(--tl);">[ 지도 영역 ]</span>
     </div>
     <div class="c" style="width:480px;background:white;overflow:hidden;">
       <div class="panel-head">
