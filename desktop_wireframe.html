@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>길냥이 — 데스크탑 와이어프레임</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; width: 100vw; height: 100vh; overflow: hidden; }
+
+.desktop-outer { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; transform-origin: top left; }
+.desktop { width: 1920px; height: 1080px; background: #FCF7ED; overflow: hidden; position: relative; box-shadow: 0 20px 80px rgba(0,0,0,0.6); }
+
+.screen { display: none; flex-direction: column; width: 1920px; height: 1080px; background: #FCF7ED; overflow: hidden; }
+.screen.active { display: flex; }
+
+/* ── Colors ── */
+:root {
+  --p: #FF8C26; --pl: #FFEDD1; --bg: #FCF7ED;
+  --td: #261A0D; --tm: #735E47; --tl: #9E876B;
+  --bw: #E0D1BD; --av: #CCBDA6; --map: #DEE8DE; --red: #E04214;
+}
+
+/* ── GNB ── */
+.gnb { width: 1920px; height: 80px; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; border-bottom: 1px solid var(--bw); flex-shrink: 0; }
+.gnb-logo { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: bold; color: var(--p); cursor: pointer; }
+.gnb-logo-icon { width: 36px; height: 36px; background: var(--p); border-radius: 8px; }
+.gnb-nav { display: flex; height: 80px; }
+.gnb-nav-item { padding: 0 28px; display: flex; align-items: center; font-size: 16px; color: var(--tm); cursor: pointer; transition: color 0.1s; border-bottom: 2px solid transparent; }
+.gnb-nav-item:hover { color: var(--p); }
+.gnb-nav-item.act { color: var(--p); font-weight: 500; border-bottom: 2px solid var(--p); }
+.gnb-right { display: flex; align-items: center; gap: 14px; }
+.gnb-search { background: var(--pl); border-radius: 20px; height: 40px; padding: 0 16px; display: flex; align-items: center; gap: 10px; width: 280px; cursor: pointer; }
+.gnb-icon-btn { width: 40px; height: 40px; background: var(--pl); border-radius: 20px; cursor: pointer; }
+.gnb-avatar { width: 40px; height: 40px; background: var(--av); border-radius: 20px; cursor: pointer; }
+
+/* ── Sidebar ── */
+.sidebar { width: 300px; height: 100%; background: var(--pl); display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden; }
+.sidebar.orange { background: var(--p); }
+.sidebar-prof { padding: 28px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; background: var(--p); }
+.sidebar.orange .sidebar-prof { background: #D96E0D; }
+.sidebar-av { width: 80px; height: 80px; background: var(--av); border-radius: 40px; }
+.sidebar-item { height: 56px; padding: 0 28px; display: flex; align-items: center; font-size: 15px; color: white; cursor: pointer; transition: background 0.1s; }
+.sidebar-item:hover { background: rgba(255,255,255,0.1); }
+.sidebar-item.act { background: var(--p); font-weight: 500; }
+.sidebar.orange .sidebar-item.act { background: #D96E0D; }
+
+/* ── Body layouts ── */
+.body-h { display: flex; flex: 1; overflow: hidden; }
+.body-v { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+.main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.main-head { height: 76px; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; border-bottom: 1px solid var(--bw); flex-shrink: 0; }
+
+/* ── Scrollable content ── */
+.scroll { flex: 1; overflow-y: auto; }
+.scroll::-webkit-scrollbar { width: 6px; }
+.scroll::-webkit-scrollbar-thumb { background: var(--bw); border-radius: 3px; }
+
+/* ── Buttons ── */
+.btn-p { background: var(--p); color: white; border-radius: 10px; height: 52px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 500; cursor: pointer; transition: filter 0.1s; flex-shrink: 0; }
+.btn-p:hover { filter: brightness(1.05); }
+.btn-p:active { filter: brightness(0.9); }
+.btn-s { background: var(--pl); color: var(--td); border-radius: 10px; height: 52px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 500; cursor: pointer; transition: filter 0.1s; flex-shrink: 0; }
+.btn-s:hover { filter: brightness(0.97); }
+.btn-sm { background: var(--p); color: white; border-radius: 8px; height: 36px; padding: 0 14px; display: flex; align-items: center; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: filter 0.1s; }
+.btn-sm:hover { filter: brightness(1.05); }
+.hire-btn { background: var(--p); color: white; border-radius: 8px; height: 60px; padding: 0 20px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 500; cursor: pointer; transition: filter 0.1s; }
+
+/* ── Chips ── */
+.chip { background: var(--pl); color: var(--tm); border-radius: 15px; padding: 0 12px; height: 30px; display: inline-flex; align-items: center; font-size: 13px; white-space: nowrap; cursor: pointer; }
+.chip.sel { background: var(--p); color: white; }
+
+/* ── Badge ── */
+.badge { height: 24px; border-radius: 12px; padding: 0 8px; display: inline-flex; align-items: center; font-size: 11px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+.badge-bw { background: var(--bw); color: var(--td); }
+.badge-p { background: var(--p); color: white; }
+.badge-pl { background: var(--pl); color: var(--td); }
+.badge-g { background: #E6F7E6; color: var(--td); }
+
+/* ── Cards ── */
+.cat-card-d { background: var(--pl); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: filter 0.1s; flex-shrink: 0; }
+.cat-card-d:hover { filter: brightness(0.97); }
+.grid-card { background: white; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; transition: filter 0.1s; flex-shrink: 0; }
+.grid-card:hover { filter: brightness(0.97); }
+
+/* ── Input ── */
+.input-field { background: white; border: 1.5px solid var(--bw); border-radius: 8px; height: 60px; padding: 0 20px; display: flex; align-items: center; font-size: 16px; color: var(--tl); cursor: text; }
+
+/* ── Divider ── */
+.div { height: 1px; background: var(--bw); flex-shrink: 0; }
+.vdiv { width: 1px; background: var(--bw); flex-shrink: 0; }
+
+/* ── Map ── */
+.map-area { background: var(--map); flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; position: relative; overflow: hidden; }
+.map-marker { border-radius: 14px; padding: 0 14px; height: 34px; display: inline-flex; align-items: center; font-size: 13px; font-weight: 500; cursor: pointer; }
+
+/* ── Stats ── */
+.stats-row-d { display: flex; background: var(--pl); }
+.stats-row-orange { display: flex; background: var(--p); }
+.stat-item-d { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0; gap: 8px; }
+.stat-item-d:not(:last-child) { border-right: 1px solid var(--bw); }
+.stats-row-orange .stat-item-d:not(:last-child) { border-right: 1px solid rgba(255,200,100,0.5); }
+
+/* ── Tabs ── */
+.tab-bar-d { display: flex; background: white; height: 56px; border-bottom: 1px solid var(--bw); flex-shrink: 0; }
+.tab-d { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; border-bottom: 2px solid transparent; color: var(--tl); }
+.tab-d.act { color: var(--p); font-weight: 500; border-bottom: 2px solid var(--p); }
+
+/* ── Message ── */
+.msg-item-d { height: 84px; display: flex; align-items: center; padding: 0 20px; gap: 14px; cursor: pointer; transition: background 0.1s; flex-shrink: 0; }
+.msg-item-d:hover { background: #f9f4ec; }
+.msg-item-d.act { background: var(--pl); }
+.bubble { border-radius: 14px; padding: 14px 18px; max-width: 620px; font-size: 15px; line-height: 1.5; }
+.bubble.other { background: white; color: var(--td); }
+.bubble.self { background: var(--p); color: white; }
+.bubble-wrap { display: flex; margin-bottom: 16px; }
+.bubble-wrap.self { justify-content: flex-end; }
+
+/* ── Login ── */
+.login-left { width: 55%; background: var(--pl); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; padding: 60px 80px; }
+.login-right { flex: 1; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 60px 80px; }
+
+/* ── Utils ── */
+.r { display: flex; align-items: center; }
+.c { display: flex; flex-direction: column; }
+.btw { justify-content: space-between; }
+.ctr { justify-content: center; align-items: center; }
+.fill { flex: 1; }
+.fw { width: 100%; }
+.gap4 { gap: 4px; }
+.gap8 { gap: 8px; }
+.gap10 { gap: 10px; }
+.gap12 { gap: 12px; }
+.gap16 { gap: 16px; }
+.gap20 { gap: 20px; }
+.gap24 { gap: 24px; }
+.av { background: var(--av); border-radius: 50%; flex-shrink: 0; }
+.avr { background: var(--av); flex-shrink: 0; }
+.or-div { display: flex; align-items: center; gap: 12px; }
+.or-div .line { flex: 1; height: 1px; background: var(--bw); }
+
+.live-tag { background: var(--red); border-radius: 6px; padding: 0 12px; height: 30px; display: inline-flex; align-items: center; font-size: 13px; font-weight: bold; color: white; }
+.log-row { background: var(--pl); border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 14px; flex-shrink: 0; font-size: 14px; color: var(--td); }
+.notif-bar { background: #f8edd6; border-radius: 8px; padding: 14px 16px; font-size: 14px; font-weight: 500; color: var(--td); }
+.alert-dot { background: var(--red); border-radius: 12px; min-width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: white; padding: 0 8px; }
+.admin-row { background: white; border-radius: 12px; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; cursor: pointer; transition: filter 0.1s; flex-shrink: 0; }
+.admin-row:hover { filter: brightness(0.97); }
+.churu-icon { width: 72px; height: 72px; border-radius: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+
+.pay-opt { border-radius: 14px; height: 64px; display: flex; align-items: center; padding: 0 20px; gap: 14px; cursor: pointer; flex-shrink: 0; }
+.hire-opt { border-radius: 12px; height: 52px; display: flex; align-items: center; padding: 0 20px; gap: 14px; cursor: pointer; flex-shrink: 0; }
+.radio-dot { width: 20px; height: 20px; border-radius: 10px; flex-shrink: 0; }
+.dur-btn { flex: 1; height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer; }
+
+.section-d { padding: 24px 40px; display: flex; flex-direction: column; gap: 12px; }
+.sec-title-d { font-size: 18px; font-weight: bold; color: var(--td); }
+.panel-head { height: 68px; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; border-bottom: 1px solid var(--bw); flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="desktop-outer">
+<div class="desktop">
+
+<!-- ═══════════════════ D00 로그인 ═══════════════════ -->
+<div class="screen" id="d00">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div></div>
+    <div class="gnb-right">
+      <div class="btn-s" style="height:40px;padding:0 20px;font-size:14px;" onclick="goTo(1)">회원가입</div>
+    </div>
+  </div>
+  <div class="r fill">
+    <div class="login-left">
+      <div style="width:80px;height:80px;background:var(--p);border-radius:40px;"></div>
+      <div style="font-size:44px;font-weight:bold;color:var(--td);">길냥이</div>
+      <div style="font-size:20px;color:var(--tm);">전국 유기묘를 위한 돌봄 플랫폼</div>
+      <div class="c gap16" style="margin-top:8px;">
+        <div class="r gap12"><div style="font-size:24px;">🐾</div><div style="font-size:17px;color:var(--tm);">가까운 고양이 위치 실시간 탐색</div></div>
+        <div class="r gap12"><div style="font-size:24px;">🏠</div><div style="font-size:17px;color:var(--tm);">신뢰할 수 있는 돌봄이 매칭</div></div>
+        <div class="r gap12"><div style="font-size:24px;">💛</div><div style="font-size:17px;color:var(--tm);">투명한 후기와 보상 시스템</div></div>
+      </div>
+    </div>
+    <div class="login-right">
+      <div style="font-size:32px;font-weight:bold;color:var(--td);">로그인</div>
+      <div class="c gap16" style="width:500px;">
+        <div class="input-field">이메일</div>
+        <div class="input-field">비밀번호</div>
+      </div>
+      <div style="width:500px;text-align:right;font-size:13px;color:var(--p);cursor:pointer;">비밀번호를 잊으셨나요?</div>
+      <div class="btn-p" style="width:500px;height:60px;font-size:18px;font-weight:bold;" onclick="goTo(2)">로그인</div>
+      <div class="or-div" style="width:500px;"><div class="line"></div><span style="font-size:13px;color:var(--tl);">또는</span><div class="line"></div></div>
+      <div class="c gap12" style="width:500px;">
+        <div class="btn-s" style="height:50px;font-size:15px;" onclick="goTo(2)">카카오 로그인</div>
+        <div class="btn-s" style="height:50px;font-size:15px;" onclick="goTo(2)">구글 로그인</div>
+      </div>
+      <div style="font-size:14px;color:var(--tl);">아직 회원이 아니신가요? <span style="color:var(--p);font-weight:500;cursor:pointer;" onclick="goTo(1)">회원가입</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D01 스플래시 ═══════════════════ -->
+<div class="screen active" id="d01">
+  <div class="fill c ctr gap24" style="background:var(--bg);padding:0 60px;">
+    <div style="width:160px;height:160px;background:var(--bw);border-radius:80px;position:relative;display:flex;align-items:center;justify-content:center;">
+      <div style="position:absolute;top:-24px;left:10px;width:28px;height:28px;background:var(--p);border-radius:6px;"></div>
+      <div style="position:absolute;top:-24px;right:10px;width:28px;height:28px;background:var(--p);border-radius:6px;"></div>
+    </div>
+    <div style="font-size:72px;font-weight:bold;color:var(--td);">길냥이</div>
+    <div style="font-size:28px;color:var(--tm);">우리 동네 가사 도우미</div>
+    <div style="font-size:18px;color:var(--tl);">고양이와 함께하는 새로운 가사 서비스</div>
+    <div class="r gap24" style="margin-top:12px;">
+      <div class="btn-p" style="width:320px;height:64px;font-size:18px;" onclick="goTo(2)">시작하기</div>
+      <div class="btn-s" style="width:320px;height:64px;font-size:18px;" onclick="goTo(0)">로그인</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D02 홈 (지도탐색) ═══════════════════ -->
+<div class="screen" id="d02">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div class="gnb-nav">
+      <div class="gnb-nav-item act" onclick="goTo(2)">홈</div>
+      <div class="gnb-nav-item" onclick="goTo(3)">탐색</div>
+      <div class="gnb-nav-item" onclick="goTo(9)">고용내역</div>
+      <div class="gnb-nav-item" onclick="goTo(14)">메시지</div>
+    </div>
+    <div class="gnb-right">
+      <div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div>
+      <div class="gnb-icon-btn"></div>
+      <div class="gnb-avatar"></div>
+    </div>
+  </div>
+  <div class="r fill" style="overflow:hidden;">
+    <div class="map-area">
+      <div style="position:absolute;top:24px;left:24px;display:flex;gap:12px;">
+        <div class="map-marker" style="background:var(--p);color:white;" onclick="goTo(4)">치즈 ★4.8</div>
+        <div class="map-marker" style="background:var(--bw);color:var(--td);" onclick="goTo(4)">나비 ★4.5</div>
+        <div class="map-marker" style="background:var(--bw);color:var(--td);" onclick="goTo(4)">고등어 ★4.2</div>
+        <div class="map-marker" style="background:var(--bw);color:var(--td);" onclick="goTo(4)">삼색이 ★4.0</div>
+        <div class="map-marker" style="background:var(--bw);color:var(--td);" onclick="goTo(4)">호랑이 ★3.9</div>
+      </div>
+      <span style="font-size:28px;color:var(--tl);">[ 지도 영역 ]</span>
+    </div>
+    <div class="c" style="width:480px;background:white;overflow:hidden;">
+      <div class="panel-head">
+        <span style="font-size:17px;font-weight:bold;color:var(--td);">주변 길냥이 12마리</span>
+        <span style="font-size:14px;color:var(--p);font-weight:500;cursor:pointer;" onclick="goTo(3)">전체보기</span>
+      </div>
+      <div class="div"></div>
+      <div class="r gap10" style="padding:10px 24px;">
+        <div class="chip sel">전체</div><div class="chip">해충박멸</div><div class="chip">청소</div><div class="chip">야간</div>
+      </div>
+      <div class="div"></div>
+      <div class="scroll c gap12" style="padding:14px 20px;">
+        <div class="cat-card-d" onclick="goTo(4)">
+          <div class="av" style="width:64px;height:64px;"></div>
+          <div class="c gap4 fill">
+            <span style="font-size:16px;font-weight:bold;color:var(--td);">치즈</span>
+            <span style="font-size:14px;color:var(--tm);">쥐 퇴치 전문</span>
+            <span style="font-size:13px;color:var(--tl);">★4.8 · 32건</span>
+          </div>
+          <div class="btn-sm" onclick="event.stopPropagation();goTo(5)">고용</div>
+        </div>
+        <div class="cat-card-d" onclick="goTo(4)">
+          <div class="av" style="width:64px;height:64px;"></div>
+          <div class="c gap4 fill">
+            <span style="font-size:16px;font-weight:bold;color:var(--td);">나비</span>
+            <span style="font-size:14px;color:var(--tm);">바퀴벌레 박멸</span>
+            <span style="font-size:13px;color:var(--tl);">★4.5 · 18건</span>
+          </div>
+          <div class="btn-sm" onclick="event.stopPropagation();goTo(5)">고용</div>
+        </div>
+        <div class="cat-card-d" onclick="goTo(4)">
+          <div class="av" style="width:64px;height:64px;"></div>
+          <div class="c gap4 fill">
+            <span style="font-size:16px;font-weight:bold;color:var(--td);">고등어</span>
+            <span style="font-size:14px;color:var(--tm);">먼지 청소</span>
+            <span style="font-size:13px;color:var(--tl);">★4.2 · 9건</span>
+          </div>
+          <div class="btn-sm" onclick="event.stopPropagation();goTo(5)">고용</div>
+        </div>
+        <div class="cat-card-d" onclick="goTo(4)">
+          <div class="av" style="width:64px;height:64px;"></div>
+          <div class="c gap4 fill">
+            <span style="font-size:16px;font-weight:bold;color:var(--td);">삼색이</span>
+            <span style="font-size:14px;color:var(--tm);">야간 순찰</span>
+            <span style="font-size:13px;color:var(--tl);">★4.0 · 5건</span>
+          </div>
+          <div class="btn-sm" onclick="event.stopPropagation();goTo(5)">고용</div>
+        </div>
+        <div class="cat-card-d" onclick="goTo(4)">
+          <div class="av" style="width:64px;height:64px;"></div>
+          <div class="c gap4 fill">
+            <span style="font-size:16px;font-weight:bold;color:var(--td);">호랑이</span>
+            <span style="font-size:14px;color:var(--tm);">창고 해충</span>
+            <span style="font-size:13px;color:var(--tl);">★3.9 · 3건</span>
+          </div>
+          <div class="btn-sm" onclick="event.stopPropagation();goTo(5)">고용</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D03 길냥이 목록 ═══════════════════ -->
+<div class="screen" id="d03">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div class="gnb-nav">
+      <div class="gnb-nav-item" onclick="goTo(2)">홈</div>
+      <div class="gnb-nav-item act" onclick="goTo(3)">탐색</div>
+      <div class="gnb-nav-item" onclick="goTo(9)">고용내역</div>
+      <div class="gnb-nav-item" onclick="goTo(14)">메시지</div>
+    </div>
+    <div class="gnb-right">
+      <div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div>
+      <div class="gnb-icon-btn"></div><div class="gnb-avatar"></div>
+    </div>
+  </div>
+  <div class="r fill" style="overflow:hidden;">
+    <!-- Filter sidebar -->
+    <div class="c" style="width:320px;background:var(--pl);padding:24px;overflow-y:auto;flex-shrink:0;">
+      <div style="font-size:20px;font-weight:bold;color:var(--td);margin-bottom:16px;">필터</div>
+      <div class="div" style="margin-bottom:16px;"></div>
+      <div class="c gap12" style="margin-bottom:16px;">
+        <div style="font-size:15px;font-weight:500;color:var(--td);">서비스 유형</div>
+        <label class="r gap10" style="cursor:pointer;"><div style="width:18px;height:18px;background:var(--p);border-radius:4px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tm);">해충박멸</span></label>
+        <label class="r gap10" style="cursor:pointer;"><div style="width:18px;height:18px;background:var(--p);border-radius:4px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tm);">쥐퇴치</span></label>
+        <label class="r gap10" style="cursor:pointer;"><div style="width:18px;height:18px;background:var(--bw);border-radius:4px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tm);">청소</span></label>
+        <label class="r gap10" style="cursor:pointer;"><div style="width:18px;height:18px;background:var(--bw);border-radius:4px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tm);">바퀴벌레</span></label>
+      </div>
+      <div class="div" style="margin-bottom:16px;"></div>
+      <div class="c gap10" style="margin-bottom:16px;">
+        <div style="font-size:15px;font-weight:500;color:var(--td);">평점</div>
+        <div class="r gap8"><div class="chip sel">전체</div><div class="chip">4.0+</div><div class="chip">4.5+</div></div>
+      </div>
+      <div class="div" style="margin-bottom:16px;"></div>
+      <div class="c gap10" style="margin-bottom:24px;">
+        <div style="font-size:15px;font-weight:500;color:var(--td);">보상 수준</div>
+        <div class="r gap8"><div class="chip sel">전체</div><div class="chip">기본</div><div class="chip">프리미엄</div></div>
+      </div>
+      <div class="btn-s" style="height:48px;font-size:14px;">필터 초기화</div>
+    </div>
+    <!-- Results -->
+    <div class="main-area">
+      <div class="r btw" style="height:64px;background:white;padding:0 24px;border-bottom:1px solid var(--bw);flex-shrink:0;">
+        <span style="font-size:18px;font-weight:bold;color:var(--td);">길냥이 목록  28마리</span>
+        <div class="r gap12">
+          <div style="background:var(--pl);border-radius:20px;height:40px;padding:0 14px;display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="goTo(13)">
+            <div style="width:18px;height:18px;background:var(--tl);border-radius:9px;"></div>
+            <span style="font-size:13px;color:var(--tl);">이름 또는 재능 검색</span>
+          </div>
+          <div style="background:var(--pl);border-radius:8px;height:40px;padding:0 14px;display:flex;align-items:center;font-size:13px;color:var(--tm);cursor:pointer;">정렬 ▼</div>
+        </div>
+      </div>
+      <div class="scroll">
+        <div style="display:flex;flex-wrap:wrap;gap:20px;padding:20px 24px;">
+          <!-- Cat cards 4-col grid -->
+          <script>
+          const cats=[['치즈','쥐 퇴치 전문','★4.8'],['나비','바퀴벌레 박멸','★4.5'],['고등어','먼지 청소','★4.2'],['삼색이','야간 순찰','★4.0'],['호랑이','창고 해충','★3.9'],['흰둥이','전문 청소','★3.8'],['점박이','바퀴벌레 전문','★3.7'],['복순이','주간 청소','★3.6']];
+          document.write(cats.map(([n,sp,rt])=>`<div class="grid-card" style="width:calc(25% - 15px);" onclick="goTo(4)"><div class="av" style="width:80px;height:80px;"></div><div style="font-size:16px;font-weight:bold;color:var(--td);">${n}</div><div style="font-size:14px;color:var(--tm);">${sp}</div><div style="font-size:13px;color:var(--tl);">${rt}</div><div class="btn-p" style="width:130px;height:38px;font-size:13px;" onclick="event.stopPropagation();goTo(5)">고용</div></div>`).join(''));
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D04 길냥이 프로필 상세 ═══════════════════ -->
+<div class="screen" id="d04">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div class="gnb-nav">
+      <div class="gnb-nav-item" onclick="goTo(2)">홈</div>
+      <div class="gnb-nav-item act" onclick="goTo(3)">탐색</div>
+      <div class="gnb-nav-item" onclick="goTo(9)">고용내역</div>
+      <div class="gnb-nav-item" onclick="goTo(14)">메시지</div>
+    </div>
+    <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
+  </div>
+  <div class="r fill" style="overflow:hidden;padding:28px 40px;gap:28px;">
+    <!-- Left -->
+    <div class="c gap16" style="width:460px;flex-shrink:0;">
+      <div style="width:460px;height:340px;background:var(--av);border-radius:14px;"></div>
+      <div class="c gap12" style="background:var(--pl);border-radius:12px;padding:20px 24px;">
+        <div style="font-size:36px;font-weight:bold;color:var(--td);">치즈</div>
+        <div style="font-size:16px;color:var(--tl);">★ 4.8 &nbsp;•&nbsp; 리뷰 32건 &nbsp;•&nbsp; 고용 45회</div>
+        <div class="r gap8 fw" style="flex-wrap:wrap;">
+          <div class="chip">쥐퇴치</div><div class="chip">야행성</div><div class="chip">민첩함</div><div class="chip">5년경력</div>
+        </div>
+      </div>
+      <div class="fill"></div>
+      <div class="c gap12">
+        <div class="btn-p fw" style="height:60px;font-size:16px;" onclick="goTo(5)">고용하기</div>
+        <div class="btn-s fw" style="height:56px;font-size:16px;">찜하기</div>
+      </div>
+    </div>
+    <!-- Right -->
+    <div class="c fill" style="background:white;border-radius:14px;overflow:hidden;">
+      <div class="tab-bar-d">
+        <div class="tab-d act">소개</div>
+        <div class="tab-d">활동 내역</div>
+        <div class="tab-d">리뷰</div>
+        <div class="tab-d">비슷한 냥이</div>
+      </div>
+      <div class="scroll c gap24" style="padding:28px 40px;">
+        <div class="c gap8">
+          <div style="font-size:18px;font-weight:bold;color:var(--td);">소개</div>
+          <div style="font-size:15px;color:var(--tm);line-height:1.6;">쥐 잡기 5년 경력의 베테랑. 야간 활동에 특화된 감각 보유.<br>선호 츄르: 해외산 참치맛 고급 제품.</div>
+        </div>
+        <div class="div"></div>
+        <div class="c gap8">
+          <div style="font-size:18px;font-weight:bold;color:var(--td);">활동 지역</div>
+          <div style="font-size:15px;color:var(--tm);">서울 마포구, 서대문구, 은평구</div>
+        </div>
+        <div class="div"></div>
+        <div class="c gap12">
+          <div style="font-size:18px;font-weight:bold;color:var(--td);">가능 서비스</div>
+          <div class="r gap20" style="flex-wrap:wrap;">
+            <div class="r gap10"><div style="width:10px;height:10px;background:var(--p);border-radius:5px;"></div><span style="font-size:14px;color:var(--tm);">쥐 포획 및 처리</span></div>
+            <div class="r gap10"><div style="width:10px;height:10px;background:var(--p);border-radius:5px;"></div><span style="font-size:14px;color:var(--tm);">야간 해충 순찰</span></div>
+            <div class="r gap10"><div style="width:10px;height:10px;background:var(--p);border-radius:5px;"></div><span style="font-size:14px;color:var(--tm);">창고 방역</span></div>
+            <div class="r gap10"><div style="width:10px;height:10px;background:var(--p);border-radius:5px;"></div><span style="font-size:14px;color:var(--tm);">먼지 청소</span></div>
+          </div>
+        </div>
+        <div class="div"></div>
+        <div class="c gap12">
+          <div style="font-size:18px;font-weight:bold;color:var(--td);">최근 리뷰</div>
+          <div class="c gap8" style="background:var(--pl);border-radius:12px;padding:14px 20px;">
+            <div style="font-size:13px;color:var(--tl);">박지수 · ★★★★★</div>
+            <div style="font-size:15px;color:var(--td);">쥐 퇴치 완벽합니다!</div>
+          </div>
+          <div class="c gap8" style="background:var(--pl);border-radius:12px;padding:14px 20px;">
+            <div style="font-size:13px;color:var(--tl);">이서영 · ★★★★☆</div>
+            <div style="font-size:15px;color:var(--td);">신속하고 깔끔해요</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D05 고용 요청 ═══════════════════ -->
+<div class="screen" id="d05">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div class="gnb-nav"><div class="gnb-nav-item act" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
+    <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
+  </div>
+  <div class="r fill" style="overflow:hidden;">
+    <!-- Left -->
+    <div class="scroll c gap20" style="flex:1;background:white;padding:40px 48px;">
+      <div style="font-size:24px;font-weight:bold;color:var(--td);">고용 요청</div>
+      <div class="div"></div>
+      <div style="font-size:15px;font-weight:500;color:var(--td);">서비스 유형</div>
+      <div class="hire-opt" style="background:var(--p);" onclick="goTo(5)"><div class="radio-dot" style="background:white;"></div><span style="font-size:15px;color:white;">해충 박멸 (쥐)</span></div>
+      <div class="hire-opt" style="background:var(--pl);" onclick="goTo(5)"><div class="radio-dot" style="background:var(--bw);"></div><span style="font-size:15px;color:var(--tm);">해충 박멸 (바퀴벌레)</span></div>
+      <div class="hire-opt" style="background:var(--pl);" onclick="goTo(5)"><div class="radio-dot" style="background:var(--bw);"></div><span style="font-size:15px;color:var(--tm);">간단한 청소 / 먼지 제거</span></div>
+      <div class="hire-opt" style="background:var(--pl);" onclick="goTo(5)"><div class="radio-dot" style="background:var(--bw);"></div><span style="font-size:15px;color:var(--tm);">야간 순찰</span></div>
+      <div style="font-size:15px;font-weight:500;color:var(--td);">고용 기간</div>
+      <div class="r gap12">
+        <div class="dur-btn" style="background:var(--pl);color:var(--tm);">1일</div>
+        <div class="dur-btn" style="background:var(--p);color:white;">3일</div>
+        <div class="dur-btn" style="background:var(--pl);color:var(--tm);">1주일</div>
+        <div class="dur-btn" style="background:var(--pl);color:var(--tm);">1개월</div>
+      </div>
+      <div style="font-size:15px;font-weight:500;color:var(--td);">희망 날짜</div>
+      <div class="r btw" style="background:var(--pl);border-radius:10px;height:52px;padding:0 24px;"><span style="font-size:15px;color:var(--tm);">2026년 04월 12일</span><span style="font-size:13px;color:var(--tl);">▼</span></div>
+      <div style="font-size:15px;font-weight:500;color:var(--td);">요청 메모</div>
+      <div style="background:var(--pl);border-radius:10px;height:110px;padding:16px 24px;font-size:15px;color:var(--tl);">길냥이에게 전달할 특이사항을 적어주세요.</div>
+    </div>
+    <!-- Right -->
+    <div class="c gap20" style="width:520px;background:var(--pl);padding:40px 40px;overflow-y:auto;flex-shrink:0;">
+      <div style="font-size:15px;font-weight:500;color:var(--td);">츄르 보상 등급</div>
+      <div class="pay-opt" style="background:white;"><div class="radio-dot" style="background:var(--bw);"></div><span style="font-size:15px;color:var(--tm);">기본 츄르 (국산)</span></div>
+      <div class="pay-opt" style="background:var(--p);"><div class="radio-dot" style="background:white;"></div><span style="font-size:15px;color:white;">프리미엄 (해외산 연어)</span></div>
+      <div class="pay-opt" style="background:white;"><div class="radio-dot" style="background:var(--bw);"></div><span style="font-size:15px;color:var(--tm);">최고급 (참다랑어)</span></div>
+      <div class="div"></div>
+      <div style="font-size:15px;font-weight:500;color:var(--td);">고용 요약</div>
+      <div class="c gap10" style="background:white;border-radius:14px;padding:20px 24px;">
+        <script>
+        [['길냥이','치즈'],['서비스','해충박멸(쥐)'],['기간','3일'],['날짜','2026.04.12'],['보상','프리미엄 츄르']].forEach(([k,v])=>{
+          document.write(`<div class="r btw"><span style="font-size:14px;color:var(--tl);">${k}</span><span style="font-size:14px;font-weight:500;color:var(--td);">${v}</span></div>`);
+        });
+        </script>
+      </div>
+      <div class="div"></div>
+      <div class="btn-p fw" style="height:60px;font-size:15px;" onclick="goTo(6)">다음 (결제하기)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D06 결제 ═══════════════════ -->
+<div class="screen" id="d06">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div class="gnb-nav"><div class="gnb-nav-item act" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
+    <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
+  </div>
+  <div class="r fill" style="overflow:hidden;">
+    <div class="scroll c gap20 fill" style="background:white;padding:40px 48px;">
+      <div style="font-size:24px;font-weight:bold;color:var(--td);">주문 요약</div>
+      <div class="r gap24" style="background:var(--pl);border-radius:14px;padding:20px 24px;align-items:center;">
+        <div class="av" style="width:80px;height:80px;"></div>
+        <div class="c gap8">
+          <div style="font-size:22px;font-weight:bold;color:var(--td);">치즈</div>
+          <div style="font-size:16px;color:var(--tm);">해충박멸(쥐) · 3일</div>
+          <div style="font-size:14px;color:var(--tl);">프리미엄 츄르 보상</div>
+        </div>
+      </div>
+      <div class="div"></div>
+      <div style="font-size:18px;font-weight:bold;color:var(--td);">가격 상세</div>
+      <div class="r btw" style="padding:4px 0;"><span style="font-size:15px;color:var(--tm);">서비스 이용료</span><span style="font-size:15px;color:var(--td);">₩9,900</span></div>
+      <div class="r btw" style="padding:4px 0;"><span style="font-size:15px;color:var(--tm);">츄르 보상</span><span style="font-size:15px;color:var(--td);">₩3,500</span></div>
+      <div class="r btw" style="padding:4px 0;"><span style="font-size:15px;color:var(--tm);">플랫폼 수수료</span><span style="font-size:15px;color:var(--td);">₩990</span></div>
+      <div class="div"></div>
+      <div class="r btw" style="padding:4px 0;"><span style="font-size:20px;font-weight:bold;color:var(--td);">총 합계</span><span style="font-size:28px;font-weight:bold;color:var(--p);">₩14,390</span></div>
+      <div class="fill"></div>
+      <div class="btn-p fw" style="height:60px;font-size:16px;" onclick="goTo(7)">₩14,390 결제하기</div>
+    </div>
+    <div class="c gap20" style="width:560px;background:white;padding:40px 40px;border-left:1px solid var(--bw);overflow-y:auto;flex-shrink:0;">
+      <div style="font-size:24px;font-weight:bold;color:var(--td);">결제 수단</div>
+      <div class="pay-opt" style="background:var(--pl);"><div class="radio-dot" style="background:var(--p);"></div><span style="font-size:16px;color:var(--tm);">신용카드</span><div style="margin-left:auto;background:var(--p);border-radius:10px;padding:0 10px;height:24px;display:flex;align-items:center;font-size:11px;font-weight:bold;color:white;">선택됨</div></div>
+      <div class="pay-opt" style="background:var(--pl);"><div class="radio-dot" style="background:var(--bw);"></div><span style="font-size:16px;color:var(--tm);">카카오페이</span></div>
+      <div class="pay-opt" style="background:var(--pl);"><div class="radio-dot" style="background:var(--bw);"></div><span style="font-size:16px;color:var(--tm);">토스페이</span></div>
+      <div class="pay-opt" style="background:var(--pl);"><div class="radio-dot" style="background:var(--bw);"></div><span style="font-size:16px;color:var(--tm);">네이버페이</span></div>
+      <div class="div"></div>
+      <div style="font-size:18px;font-weight:bold;color:var(--td);">약관 동의</div>
+      <label class="r gap12" style="cursor:pointer;font-size:14px;color:var(--tm);"><div style="width:20px;height:20px;background:var(--p);border-radius:4px;flex-shrink:0;"></div>서비스 이용약관 동의 (필수)</label>
+      <label class="r gap12" style="cursor:pointer;font-size:14px;color:var(--tm);"><div style="width:20px;height:20px;background:var(--p);border-radius:4px;flex-shrink:0;"></div>개인정보 처리방침 동의 (필수)</label>
+      <label class="r gap12" style="cursor:pointer;font-size:14px;color:var(--tm);"><div style="width:20px;height:20px;background:var(--bw);border-radius:4px;flex-shrink:0;"></div>마케팅 정보 수신 동의 (선택)</label>
+      <div class="div"></div>
+      <div style="font-size:13px;color:var(--tl);">영수증은 이메일로 발송됩니다</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D07 활동 모니터링 ═══════════════════ -->
+<div class="screen" id="d07">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div class="gnb-nav"><div class="gnb-nav-item" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item act" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
+    <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
+  </div>
+  <div class="r fill" style="overflow:hidden;">
+    <div class="c fill" style="padding:24px 28px;gap:16px;overflow:hidden;">
+      <div style="flex:1;background:var(--av);border-radius:14px;display:flex;flex-direction:column;align-items:flex-start;padding:14px;gap:10px;overflow:hidden;">
+        <div class="live-tag">● LIVE</div>
+        <div style="font-size:26px;color:var(--tl);">[실시간 영상]</div>
+      </div>
+      <div class="r gap16" style="background:var(--pl);border-radius:12px;padding:0 24px;height:72px;align-items:center;flex-shrink:0;">
+        <div style="width:14px;height:14px;background:var(--p);border-radius:7px;"></div>
+        <span style="font-size:16px;font-weight:500;color:var(--td);">활동 중 &nbsp;•&nbsp; 주방 구역 &nbsp;•&nbsp; 쥐 탐색 중</span>
+      </div>
+      <div class="r gap16" style="flex-shrink:0;">
+        <div class="btn-s fill" style="height:56px;font-size:15px;">고용 종료</div>
+        <div class="btn-p fill" style="height:56px;font-size:15px;" onclick="goTo(8)">평가하기</div>
+      </div>
+    </div>
+    <div class="c" style="width:460px;background:white;padding:24px;gap:12px;overflow:hidden;flex-shrink:0;border-left:1px solid var(--bw);">
+      <div style="font-size:20px;font-weight:bold;color:var(--td);">활동 로그</div>
+      <div class="div"></div>
+      <div class="scroll c gap8">
+        <script>
+        [['22:10','주방 구역 순찰 시작'],['22:30','쥐 1마리 발견 및 추적 중'],['22:55','쥐 처리 완료'],['23:10','2구역 이동 중'],['23:30','창고 점검 완료'],['23:50','야간 순찰 마무리 중']].forEach(([t,a])=>{
+          document.write(`<div class="log-row"><span style="font-size:13px;color:var(--tl);width:48px;flex-shrink:0;">${t}</span><span style="font-size:14px;color:var(--td);">${a}</span></div><div class="div"></div>`);
+        });
+        </script>
+        <div class="notif-bar">[알림] 치즈가 쥐를 처리 완료했습니다</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D08 만족도 평가 ═══════════════════ -->
+<div class="screen" id="d08">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div class="gnb-nav"><div class="gnb-nav-item" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item act" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
+    <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
+  </div>
+  <div class="c fill ctr" style="overflow:hidden;">
+    <div class="c gap28" style="width:900px;background:white;border-radius:18px;padding:48px;overflow-y:auto;max-height:940px;">
+      <div class="r gap24" style="background:var(--pl);border-radius:14px;padding:20px 24px;align-items:center;">
+        <div class="av" style="width:64px;height:64px;"></div>
+        <div class="c fill gap8"><span style="font-size:22px;font-weight:bold;color:var(--td);">치즈</span><span style="font-size:15px;color:var(--tm);">해충박멸(쥐) &nbsp;•&nbsp; 3일 완료</span></div>
+        <div class="badge badge-pl" style="height:28px;font-size:13px;padding:0 12px;">업무완료</div>
+      </div>
+      <div style="font-size:22px;font-weight:bold;color:var(--td);text-align:center;">츄르로 만족도를 평가해주세요</div>
+      <div class="r gap20 ctr">
+        <script>for(let i=0;i<5;i++){document.write(`<div class="churu-icon" style="background:${i<4?'var(--p)':'var(--bw)'};"><div style="width:24px;height:24px;background:${i<4?'white':'var(--p)'};border-radius:12px;"></div></div>`);}</script>
+      </div>
+      <div style="font-size:14px;color:var(--tl);text-align:center;">4개 선택됨 (클릭하여 변경)</div>
+      <div class="div"></div>
+      <div style="font-size:18px;font-weight:bold;color:var(--td);">한줄 후기</div>
+      <div style="background:var(--pl);border-radius:10px;height:96px;padding:16px 24px;font-size:15px;color:var(--tl);">치즈의 활약에 대한 솔직한 후기를 남겨주세요.</div>
+      <div style="font-size:18px;font-weight:bold;color:var(--td);">츄르 보상 등급 선택</div>
+      <div class="r gap16">
+        <div style="flex:1;height:56px;background:var(--pl);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--tm);cursor:pointer;">기본 (국산 참치)</div>
+        <div style="flex:1;height:56px;background:var(--p);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;color:white;font-weight:500;cursor:pointer;">우수 (해외 연어)</div>
+        <div style="flex:1;height:56px;background:var(--pl);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--tm);cursor:pointer;">최고급 (프리미엄)</div>
+      </div>
+      <div class="btn-p fw" style="height:60px;font-size:15px;" onclick="goTo(9)">평가 완료 및 츄르 지급</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D09 마이페이지 ═══════════════════ -->
+<div class="screen" id="d09">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div class="gnb-nav"><div class="gnb-nav-item act" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
+    <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
+  </div>
+  <div class="r fill" style="overflow:hidden;">
+    <div class="sidebar">
+      <div class="sidebar-prof"><div class="sidebar-av"></div><div style="font-size:20px;font-weight:bold;color:white;">박지수</div><div style="font-size:14px;color:rgba(255,255,255,0.8);">고용인</div></div>
+      <div class="sidebar-item act" onclick="goTo(9)">대시보드</div>
+      <div class="sidebar-item" onclick="goTo(10)">고용 내역</div>
+      <div class="sidebar-item" onclick="goTo(10)">찜한 냥이</div>
+      <div class="sidebar-item" onclick="goTo(10)">결제 내역</div>
+      <div class="sidebar-item">설정</div>
+    </div>
+    <div class="main-area">
+      <div class="main-head"><span style="font-size:22px;font-weight:bold;color:var(--td);">대시보드</span><span style="font-size:15px;color:var(--p);font-weight:500;cursor:pointer;">정보 수정</span></div>
+      <div class="div"></div>
+      <div class="stats-row-d">
+        <script>[['45','총 고용'],['3','진행 중'],['5','찜한 냥이'],['₩132K','총 지출']].forEach(([v,l])=>{document.write(`<div class="stat-item-d"><div style="font-size:32px;font-weight:bold;color:var(--td);">${v}</div><div style="font-size:14px;color:var(--tl);">${l}</div></div>`);});</script>
+      </div>
+      <div class="div"></div>
+      <div class="r fill" style="overflow:hidden;">
+        <div class="scroll c gap12" style="flex:1;padding:24px 40px;">
+          <div style="font-size:18px;font-weight:bold;color:var(--td);">최근 고용 내역</div>
+          <script>[['치즈','해충박멸','04.05','badge-pl','업무완료'],['나비','청소','03.28','badge-g','보상완료'],['고등어','쥐퇴치','03.10','badge-pl','업무완료'],['삼색이','야간순찰','02.28','badge-g','보상완료']].forEach(([n,sp,d,bc,st])=>{document.write(`<div class="r gap14" style="background:white;border-radius:12px;padding:12px 20px;align-items:center;cursor:pointer;"><div class="av" style="width:44px;height:44px;"></div><div class="c gap4 fill"><span style="font-size:16px;font-weight:bold;color:var(--td);">${n}</span><span style="font-size:13px;color:var(--tl);">${sp} · ${d}</span></div><div class="badge ${bc}">${st}</div></div>`);});</script>
+        </div>
+        <div class="vdiv"></div>
+        <div class="scroll c gap12" style="flex:1;padding:24px 40px;background:var(--pl);">
+          <div style="font-size:18px;font-weight:bold;color:var(--td);">찜한 냥이</div>
+          <div class="r gap14" style="flex-wrap:wrap;">
+            <script>['치즈','나비','고등어','삼색이','호랑이'].forEach(n=>{document.write(`<div class="c ctr gap8" style="background:white;border-radius:14px;padding:14px;cursor:pointer;width:116px;" onclick="goTo(4)"><div class="av" style="width:64px;height:64px;"></div><span style="font-size:14px;font-weight:500;color:var(--td);">${n}</span></div>`);});</script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D10 마이페이지 (고용인) ═══════════════════ -->
+<div class="screen" id="d10">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div class="gnb-nav"><div class="gnb-nav-item act" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
+    <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
+  </div>
+  <div class="r fill" style="overflow:hidden;">
+    <div class="sidebar">
+      <div class="sidebar-prof"><div class="sidebar-av"></div><div style="font-size:20px;font-weight:bold;color:white;">박지수</div><div style="font-size:14px;color:rgba(255,255,255,0.8);">고용인</div></div>
+      <div class="sidebar-item" onclick="goTo(9)">대시보드</div>
+      <div class="sidebar-item act">고용 내역</div>
+      <div class="sidebar-item">찜한 냥이</div>
+      <div class="sidebar-item">결제 내역</div>
+      <div class="sidebar-item">설정</div>
+    </div>
+    <div class="main-area">
+      <div class="main-head"><span style="font-size:22px;font-weight:bold;color:var(--td);">고용 내역 및 찜한 냥이</span></div>
+      <div class="div"></div>
+      <div class="r fill" style="overflow:hidden;">
+        <div class="scroll c gap12" style="flex:1;padding:24px 40px;">
+          <div style="font-size:18px;font-weight:bold;color:var(--td);">고용 내역</div>
+          <script>[['치즈','해충박멸','04.05','badge-pl','업무완료'],['나비','청소','03.28','badge-g','보상완료'],['고등어','쥐퇴치','03.10','badge-pl','업무완료'],['삼색이','야간순찰','02.28','badge-g','보상완료'],['호랑이','창고해충','02.15','badge-g','보상완료']].forEach(([n,sp,d,bc,st])=>{document.write(`<div class="r gap14" style="background:white;border-radius:12px;padding:12px 20px;align-items:center;cursor:pointer;"><div class="av" style="width:44px;height:44px;"></div><div class="c gap4 fill"><span style="font-size:16px;font-weight:bold;color:var(--td);">${n}</span><span style="font-size:13px;color:var(--tl);">${sp} · ${d}</span></div><div class="badge ${bc}">${st}</div></div>`);});</script>
+        </div>
+        <div class="vdiv"></div>
+        <div class="scroll c gap12" style="flex:1;padding:24px 40px;background:var(--pl);">
+          <div style="font-size:18px;font-weight:bold;color:var(--td);">찜한 냥이</div>
+          <div class="r gap14" style="flex-wrap:wrap;">
+            <script>['치즈','나비','고등어','삼색이','호랑이','흰둥이'].forEach(n=>{document.write(`<div class="c ctr gap8" style="background:white;border-radius:14px;padding:14px;cursor:pointer;width:116px;" onclick="goTo(4)"><div class="av" style="width:68px;height:68px;"></div><span style="font-size:14px;font-weight:500;color:var(--td);">${n}</span><div class="btn-sm" onclick="event.stopPropagation();goTo(5)" style="font-size:11px;height:28px;padding:0 10px;">고용</div></div>`);});</script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D11 마이페이지 (가사도우미) ═══════════════════ -->
+<div class="screen" id="d11">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div class="gnb-nav"><div class="gnb-nav-item act" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
+    <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
+  </div>
+  <div class="r fill" style="overflow:hidden;">
+    <div class="sidebar">
+      <div class="sidebar-prof"><div class="sidebar-av"></div><div style="font-size:20px;font-weight:bold;color:white;">치즈</div><div style="font-size:14px;color:rgba(255,255,255,0.8);">가사도우미</div></div>
+      <div class="sidebar-item act">대시보드</div>
+      <div class="sidebar-item">업무 현황</div>
+      <div class="sidebar-item">수익 내역</div>
+      <div class="sidebar-item">프로필 관리</div>
+      <div class="sidebar-item">설정</div>
+    </div>
+    <div class="main-area">
+      <div class="main-head"><span style="font-size:22px;font-weight:bold;color:var(--td);">가사도우미 대시보드</span></div>
+      <div class="div"></div>
+      <div class="stats-row-d">
+        <script>[['45','총 고용'],['4.8','평균 평점'],['₩225K','총 수익'],['2','진행 중']].forEach(([v,l])=>{document.write(`<div class="stat-item-d"><div style="font-size:30px;font-weight:bold;color:var(--td);">${v}</div><div style="font-size:13px;color:var(--tl);">${l}</div></div>`);});</script>
+      </div>
+      <div class="div"></div>
+      <div class="r fill" style="overflow:hidden;">
+        <div class="scroll c gap12" style="flex:1;padding:24px 40px;">
+          <div class="r btw" style="background:white;border-radius:12px;padding:0 20px;height:60px;align-items:center;">
+            <span style="font-size:15px;color:var(--td);">"쥐 잡기 5년 경력! 야간 출동 환영합니다"</span>
+            <span style="font-size:14px;color:var(--p);font-weight:500;cursor:pointer;">수정</span>
+          </div>
+          <div style="font-size:18px;font-weight:bold;color:var(--td);">업무 현황</div>
+          <script>[['박지수 의뢰','해충박멸(쥐)','04.07','badge-p','업무중'],['김민준 의뢰','청소','04.03','badge-pl','업무완료'],['이서영 의뢰','바퀴벌레','03.28','badge-g','보상완료'],['정다운 의뢰','야간순찰','03.15','badge-g','보상완료']].forEach(([n,sp,d,bc,st])=>{document.write(`<div class="r gap14" style="background:white;border-radius:12px;padding:12px 20px;align-items:center;cursor:pointer;"><div class="av" style="width:44px;height:44px;"></div><div class="c gap4 fill"><span style="font-size:16px;font-weight:bold;color:var(--td);">${n}</span><span style="font-size:13px;color:var(--tl);">${sp} · ${d}</span></div><div class="badge ${bc}">${st}</div></div>`);});</script>
+        </div>
+        <div class="vdiv"></div>
+        <div class="scroll c gap12" style="flex:1;padding:24px 40px;background:var(--pl);">
+          <div style="font-size:18px;font-weight:bold;color:var(--td);">이번 달 수익</div>
+          <div style="font-size:40px;font-weight:bold;color:var(--p);">₩78,000</div>
+          <div style="font-size:14px;color:var(--tl);">전월 대비 +12%</div>
+          <div class="div"></div>
+          <div style="font-size:18px;font-weight:bold;color:var(--td);">최근 수신 평가</div>
+          <script>[['박지수','쥐 퇴치 완벽합니다!','★★★★★'],['김민준','신속하고 깔끔해요','★★★★☆'],['이서영','또 부탁드려요','★★★★★']].forEach(([n,rv,rt])=>{document.write(`<div class="c gap8" style="background:white;border-radius:12px;padding:14px 20px;"><div style="font-size:13px;color:var(--tl);">${n} · ${rt}</div><div style="font-size:15px;color:var(--td);">${rv}</div></div>`);});</script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D12 마이페이지 (관리자) ═══════════════════ -->
+<div class="screen" id="d12">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div class="gnb-nav"><div class="gnb-nav-item act" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
+    <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
+  </div>
+  <div class="r fill" style="overflow:hidden;">
+    <div class="sidebar orange">
+      <div class="sidebar-prof"><div class="sidebar-av"></div><div style="font-size:20px;font-weight:bold;color:white;">Admin</div><div style="font-size:14px;color:rgba(255,255,255,0.8);">관리자</div></div>
+      <div class="sidebar-item act">대시보드</div>
+      <div class="sidebar-item">회원 관리</div>
+      <div class="sidebar-item">신고 제재</div>
+      <div class="sidebar-item">시스템 설정</div>
+      <div class="sidebar-item">로그</div>
+    </div>
+    <div class="main-area">
+      <div class="main-head"><span style="font-size:22px;font-weight:bold;color:var(--td);">관리자 대시보드</span></div>
+      <div class="div"></div>
+      <div class="stats-row-orange">
+        <script>[['248','총 가입자'],['18','오늘 고용'],['3','신고 접수'],['₩2.4M','이달 매출']].forEach(([v,l])=>{document.write(`<div class="stat-item-d"><div style="font-size:30px;font-weight:bold;color:white;">${v}</div><div style="font-size:13px;color:rgba(255,255,200,0.9);">${l}</div></div>`);});</script>
+      </div>
+      <div class="div"></div>
+      <div class="r fill" style="overflow:hidden;">
+        <div class="scroll c gap12" style="flex:1;padding:24px 40px;">
+          <div style="font-size:18px;font-weight:bold;color:var(--td);">회원 관리</div>
+          <script>[['고용인 목록','32명 등록',false],['가사도우미 목록','28명 등록',false],['신규 가입 검토','5명 대기',true],['정지 회원','2명',false]].forEach(([t,s,al])=>{document.write(`<div class="admin-row"><div class="c gap8"><span style="font-size:16px;font-weight:500;color:var(--td);">${t}</span><span style="font-size:14px;color:var(--tl);">${s}</span></div>${al?`<div class="alert-dot">!</div>`:`<span style="font-size:15px;color:var(--tl);">›</span>`}</div>`);});</script>
+        </div>
+        <div class="vdiv"></div>
+        <div class="scroll c gap12" style="flex:1;padding:24px 40px;">
+          <div style="font-size:18px;font-weight:bold;color:var(--td);">신고 및 제재</div>
+          <script>[['신규 신고 접수','3건 미처리',true,'red'],['제재 내역','12건 완료',false,''],['이의신청','1건 검토중',true,'red'],['시스템 점검','정상 운영',false,'']].forEach(([t,s,al,c])=>{document.write(`<div class="admin-row"><div class="c gap8"><span style="font-size:16px;font-weight:500;color:var(--td);">${t}</span><span style="font-size:14px;color:var(--tl);">${s}</span></div>${al?`<div class="alert-dot" style="background:var(--red);">!</div>`:`<span style="font-size:15px;color:var(--tl);">›</span>`}</div>`);});</script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D13 검색 ═══════════════════ -->
+<div class="screen" id="d13">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div class="gnb-nav"><div class="gnb-nav-item" onclick="goTo(2)">홈</div><div class="gnb-nav-item act" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
+    <div class="gnb-right"><div class="gnb-search"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
+  </div>
+  <div class="c fill" style="overflow:hidden;">
+    <div class="r gap20" style="height:76px;background:white;padding:0 40px;align-items:center;border-bottom:1px solid var(--bw);flex-shrink:0;">
+      <div class="r gap14 fill" style="background:var(--pl);border-radius:26px;height:52px;padding:0 24px;align-items:center;">
+        <div style="width:22px;height:22px;background:var(--tl);border-radius:11px;"></div>
+        <span style="font-size:16px;color:var(--td);">쥐 퇴치 전문</span>
+      </div>
+      <div class="btn-p" style="width:120px;height:52px;">검색</div>
+    </div>
+    <div class="r fill" style="overflow:hidden;">
+      <!-- Left: filters -->
+      <div class="c" style="width:380px;background:var(--pl);padding:24px;overflow-y:auto;flex-shrink:0;gap:16px;">
+        <div style="font-size:16px;font-weight:bold;color:var(--td);">최근 검색어</div>
+        <script>['쥐 퇴치','바퀴벌레','나비','치즈'].forEach(k=>{document.write(`<div class="r btw" style="background:white;border-radius:10px;height:44px;padding:0 14px;cursor:pointer;"><span style="font-size:14px;color:var(--tm);">${k}</span><span style="font-size:13px;color:var(--tl);">✕</span></div>`);});</script>
+        <div class="div"></div>
+        <div style="font-size:16px;font-weight:bold;color:var(--td);">추천 검색어</div>
+        <div class="r gap8" style="flex-wrap:wrap;">
+          <script>['해충박멸','쥐퇴치','바퀴벌레','야간출동','청소전문','민첩냥'].forEach(k=>{document.write(`<div class="chip">${k}</div>`);});</script>
+        </div>
+        <div class="div"></div>
+        <div style="font-size:16px;font-weight:bold;color:var(--td);">인기 지역</div>
+        <script>['마포구','서대문구','강남구','은평구'].forEach(a=>{document.write(`<div class="r btw" style="background:white;border-radius:10px;height:40px;padding:0 14px;cursor:pointer;"><span style="font-size:14px;color:var(--tm);">${a}</span><span style="font-size:12px;color:var(--tl);">▶</span></div>`);});</script>
+      </div>
+      <!-- Right: results -->
+      <div class="main-area">
+        <div class="r btw" style="height:64px;background:white;padding:0 24px;border-bottom:1px solid var(--bw);flex-shrink:0;">
+          <span style="font-size:18px;font-weight:bold;color:var(--td);">"쥐 퇴치" 검색 결과 6건</span>
+          <div class="r gap10">
+            <div style="background:var(--p);color:white;border-radius:20px;height:40px;padding:0 16px;display:flex;align-items:center;font-size:13px;cursor:pointer;">거리순</div>
+            <div style="background:var(--pl);color:var(--tm);border-radius:20px;height:40px;padding:0 16px;display:flex;align-items:center;font-size:13px;cursor:pointer;">평점순</div>
+            <div style="background:var(--pl);color:var(--tm);border-radius:20px;height:40px;padding:0 16px;display:flex;align-items:center;font-size:13px;cursor:pointer;">고용 많은순</div>
+          </div>
+        </div>
+        <div class="scroll">
+          <div style="display:flex;flex-wrap:wrap;gap:20px;padding:20px 24px;">
+            <script>[['치즈','쥐 퇴치 전문','★4.8'],['고등어','야간 해충박멸','★4.5'],['삼색이','쥐 포획 5년','★4.3'],['흰둥이','바퀴벌레 전문','★4.1'],['호랑이','창고 해충','★3.9'],['점박이','야간 순찰','★3.8'],['복순이','해충 전문','★3.7'],['나비','청소 전문','★3.6']].forEach(([n,sp,rt])=>{document.write(`<div class="grid-card" style="width:calc(25% - 15px);" onclick="goTo(4)"><div class="av" style="width:68px;height:68px;"></div><div style="font-size:16px;font-weight:bold;color:var(--td);">${n}</div><div style="font-size:14px;color:var(--tm);">${sp}</div><div style="font-size:13px;color:var(--tl);">${rt}</div><div class="btn-p" style="width:120px;height:38px;font-size:13px;" onclick="event.stopPropagation();goTo(5)">고용</div></div>`);});</script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ D14 메시지 ═══════════════════ -->
+<div class="screen" id="d14">
+  <div class="gnb">
+    <div class="gnb-logo"><div class="gnb-logo-icon"></div>길냥이</div>
+    <div class="gnb-nav"><div class="gnb-nav-item" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item act" onclick="goTo(14)">메시지</div></div>
+    <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
+  </div>
+  <div class="r fill" style="overflow:hidden;">
+    <!-- Message list -->
+    <div class="c" style="width:440px;background:white;overflow:hidden;flex-shrink:0;border-right:1px solid var(--bw);">
+      <div class="r btw" style="height:68px;padding:0 20px;border-bottom:1px solid var(--bw);align-items:center;flex-shrink:0;">
+        <span style="font-size:20px;font-weight:bold;color:var(--td);">메시지</span>
+        <div style="background:var(--p);border-radius:10px;height:36px;padding:0 12px;display:flex;align-items:center;font-size:12px;font-weight:500;color:white;cursor:pointer;">+ 새 메시지</div>
+      </div>
+      <div class="r gap12" style="background:var(--pl);border-radius:26px;margin:8px 16px;height:48px;padding:0 20px;align-items:center;flex-shrink:0;">
+        <div style="width:20px;height:20px;background:var(--tl);border-radius:10px;"></div>
+        <span style="font-size:14px;color:var(--tl);">메시지 검색</span>
+      </div>
+      <div class="div"></div>
+      <div class="scroll c">
+        <div class="msg-item-d act" onclick="goTo(14)">
+          <div class="av" style="width:52px;height:52px;"></div>
+          <div class="c gap4 fill" style="overflow:hidden;">
+            <span style="font-size:16px;font-weight:bold;color:var(--td);">치즈</span>
+            <span style="font-size:13px;color:var(--tl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">지금 출발할게요! 주방 쪽 준비해 주세요</span>
+          </div>
+          <div class="c" style="align-items:flex-end;gap:8px;flex-shrink:0;">
+            <span style="font-size:12px;color:var(--tl);">22:10</span>
+            <div style="background:var(--p);border-radius:12px;min-width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;color:white;padding:0 6px;">2</div>
+          </div>
+        </div>
+        <div class="div"></div>
+        <script>[['박지수','다음 주 일정 확인 부탁드려요','21:45'],['나비','바퀴벌레 처리 완료했습니다','어제'],['고등어','견적서 보내드렸어요','어제'],['삼색이','야간 출동 가능합니다','3일 전'],['흰둥이','청소 일정 잡아드릴게요','4일 전']].forEach(([n,p,t])=>{document.write(`<div class="msg-item-d" onclick="goTo(14)"><div class="av" style="width:52px;height:52px;"></div><div class="c gap4 fill" style="overflow:hidden;"><span style="font-size:16px;font-weight:bold;color:var(--td);">${n}</span><span style="font-size:13px;color:var(--tl);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p}</span></div><span style="font-size:12px;color:var(--tl);flex-shrink:0;">${t}</span></div><div class="div"></div>`);});</script>
+      </div>
+    </div>
+    <!-- Chat area -->
+    <div class="c fill" style="background:var(--bg);overflow:hidden;">
+      <div class="r btw" style="height:76px;background:white;padding:0 28px;border-bottom:1px solid var(--bw);align-items:center;flex-shrink:0;">
+        <div class="r gap14">
+          <div class="av" style="width:48px;height:48px;"></div>
+          <div class="c gap4">
+            <span style="font-size:18px;font-weight:bold;color:var(--td);">치즈</span>
+            <span style="font-size:14px;color:var(--tl);">쥐 퇴치 전문 · 업무 중</span>
+          </div>
+        </div>
+        <div class="r gap12">
+          <div class="badge badge-p" style="height:28px;font-size:13px;padding:0 12px;">업무중</div>
+          <div style="width:40px;height:40px;background:var(--pl);border-radius:20px;"></div>
+        </div>
+      </div>
+      <div class="scroll c" style="padding:24px 40px;gap:0;">
+        <div class="r ctr" style="margin-bottom:20px;">
+          <div style="flex:1;height:1px;background:var(--bw);"></div>
+          <div style="background:var(--pl);border-radius:14px;padding:0 14px;height:28px;display:flex;align-items:center;font-size:12px;color:var(--tl);margin:0 12px;">2026년 4월 7일</div>
+          <div style="flex:1;height:1px;background:var(--bw);"></div>
+        </div>
+        <div class="bubble-wrap"><div class="bubble other">박지수님, 지금 출발합니다! 주방 쪽 창문 잠겨있으면 열어두세요.</div></div>
+        <div class="bubble-wrap self"><div class="bubble self">네 알겠어요! 준비해 놓을게요.</div></div>
+        <div class="bubble-wrap"><div class="bubble other">도착했습니다. 시작하겠습니다.</div></div>
+        <div class="bubble-wrap"><div class="bubble other">쥐 발견! 추적 중입니다.</div></div>
+        <div class="bubble-wrap self"><div class="bubble self">수고하세요!</div></div>
+        <div class="bubble-wrap"><div class="bubble other">작업 완료했습니다. 두 마리 처리했어요.</div></div>
+      </div>
+      <div class="r gap16" style="height:72px;background:white;padding:0 24px;border-top:1px solid var(--bw);align-items:center;flex-shrink:0;">
+        <div class="r gap12 fill" style="background:var(--pl);border-radius:26px;height:52px;padding:0 24px;align-items:center;">
+          <span style="font-size:15px;color:var(--tl);">메시지를 입력하세요...</span>
+        </div>
+        <div class="btn-p" style="width:90px;height:52px;">전송</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .desktop -->
+</div><!-- .desktop-outer -->
+
+<script>
+const ids = ['d00','d01','d02','d03','d04','d05','d06','d07','d08','d09','d10','d11','d12','d13','d14'];
+let cur = 1;
+const history = [];
+
+function goTo(n, addHistory = true) {
+  if (addHistory && n !== cur) history.push(cur);
+  document.getElementById(ids[cur]).classList.remove('active');
+  cur = n;
+  document.getElementById(ids[cur]).classList.add('active');
+  // Reset scroll on content areas
+  document.getElementById(ids[cur]).querySelectorAll('.scroll').forEach(el => el.scrollTop = 0);
+}
+
+function goBack() {
+  if (history.length) goTo(history.pop(), false);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') goTo((cur + 1) % ids.length);
+  else if (e.key === 'ArrowLeft') {
+    if (history.length) goBack();
+    else goTo((cur - 1 + ids.length) % ids.length);
+  }
+  else if (e.key === 'Escape') goBack();
+});
+
+// Fit desktop to viewport
+function fitDesktop() {
+  const outer = document.querySelector('.desktop-outer');
+  const scaleW = window.innerWidth / 1920;
+  const scaleH = window.innerHeight / 1080;
+  const scale = Math.min(1, scaleW, scaleH);
+  const scaledW = 1920 * scale;
+  const scaledH = 1080 * scale;
+  const offsetX = (window.innerWidth - scaledW) / 2;
+  const offsetY = (window.innerHeight - scaledH) / 2;
+  outer.style.transform = `scale(${scale})`;
+  outer.style.left = offsetX + 'px';
+  outer.style.top = offsetY + 'px';
+}
+fitDesktop();
+window.addEventListener('resize', fitDesktop);
+</script>
+</body>
+</html>
