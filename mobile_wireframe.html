@@ -8,19 +8,10 @@
 body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; display: flex; height: 100vh; overflow: hidden; align-items: center; justify-content: center; }
 
 .main { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
-.phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 0; }
+.phone-wrap { display: flex; flex-direction: column; align-items: center; }
 .phone-nav { display: none; }
 .screen-label { display: none; }
 .nav-btn { display: none; }
-
-/* Screen picker overlay */
-.screen-picker { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); border-radius: 24px; padding: 6px 8px; }
-.pick-arrow { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
-.pick-arrow:hover { background: rgba(255,140,38,0.4); }
-.pick-label { color: white; font-size: 12px; min-width: 160px; text-align: center; font-family: 'Apple SD Gothic Neo', sans-serif; }
-.pick-dots { display: flex; gap: 4px; align-items: center; }
-.pick-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.25); cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
-.pick-dot.active { background: #FF8C26; width: 18px; border-radius: 3px; }
 
 .phone { width: 375px; height: 812px; background: #FCF7ED; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
 
@@ -147,17 +138,60 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
 </head>
 <body>
 
-<div class="screen-picker">
-  <button class="pick-arrow" onclick="prev()">&#8592;</button>
-  <span class="pick-label" id="screen-label">S01 — 스플래시</span>
-  <button class="pick-arrow" onclick="next()">&#8594;</button>
-</div>
-
 <div class="main">
   <div class="phone-wrap">
     <div class="phone-nav"></div>
 
     <div class="phone">
+
+      <!-- ───────────── S00 로그인 ───────────── -->
+      <div class="screen" id="s00">
+        <div class="status-bar"><span>9:41</span><span>...</span></div>
+        <div class="fill c ctr" style="padding: 0 32px; gap: 0;">
+          <div class="cat-logo" style="margin-bottom: 8px;">
+            <div class="cat-ears"><div class="cat-ear"></div><div class="cat-ear"></div></div>
+            <div class="cat-circle"></div>
+          </div>
+          <div style="font-size:26px;font-weight:bold;color:#261A0D;margin-bottom:4px;">길냥이</div>
+          <div style="font-size:13px;color:#9E876B;margin-bottom:32px;">우리 동네 가사 도우미</div>
+
+          <div style="width:100%;display:flex;flex-direction:column;gap:10px;">
+            <div style="background:#FFEDD1;border-radius:12px;height:52px;display:flex;align-items:center;padding:0 16px;gap:10px;">
+              <span style="font-size:13px;color:#9E876B;">📱</span>
+              <span style="font-size:14px;color:#9E876B;">휴대폰 번호 또는 이메일</span>
+            </div>
+            <div style="background:#FFEDD1;border-radius:12px;height:52px;display:flex;align-items:center;padding:0 16px;gap:10px;">
+              <span style="font-size:13px;color:#9E876B;">🔒</span>
+              <span style="font-size:14px;color:#9E876B;">비밀번호</span>
+            </div>
+            <div style="text-align:right;padding:2px 4px;cursor:pointer;">
+              <span style="font-size:12px;color:#9E876B;">비밀번호를 잊으셨나요?</span>
+            </div>
+            <div class="btn-p fw" onclick="goTo(1)" style="margin-top:4px;">로그인</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;width:100%;margin:20px 0 16px;">
+            <div style="flex:1;height:1px;background:#E0D1BD;"></div>
+            <span style="font-size:12px;color:#9E876B;">또는</span>
+            <div style="flex:1;height:1px;background:#E0D1BD;"></div>
+          </div>
+
+          <div style="width:100%;display:flex;flex-direction:column;gap:10px;">
+            <div style="background:#FEE500;border-radius:12px;height:52px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;" onclick="goTo(1)">
+              <span style="font-size:18px;">💬</span>
+              <span style="font-size:14px;font-weight:500;color:#261A0D;">카카오로 로그인</span>
+            </div>
+            <div style="background:white;border-radius:12px;height:52px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;border:1px solid #E0D1BD;" onclick="goTo(1)">
+              <span style="font-size:18px;">G</span>
+              <span style="font-size:14px;font-weight:500;color:#261A0D;">구글로 로그인</span>
+            </div>
+          </div>
+        </div>
+        <div style="padding:16px 32px 32px;text-align:center;flex-shrink:0;">
+          <span style="font-size:13px;color:#9E876B;">계정이 없으신가요? </span>
+          <span style="font-size:13px;color:#FF8C26;font-weight:500;cursor:pointer;">회원가입</span>
+        </div>
+      </div>
 
       <!-- ───────────── S01 스플래시 ───────────── -->
       <div class="screen active" id="s01">
@@ -172,7 +206,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
         </div>
         <div class="c gap12" style="padding:0 32px 80px;">
           <div class="btn-p fw" onclick="goTo(1)">시작하기</div>
-          <div style="font-size:13px;color:#9E876B;text-align:center;cursor:pointer;" onclick="goTo(1)">이미 계정이 있으신가요? <span style="color:#FF8C26;font-weight:500;">로그인</span></div>
+          <div style="font-size:13px;color:#9E876B;text-align:center;cursor:pointer;" onclick="goTo(14)">이미 계정이 있으신가요? <span style="color:#FF8C26;font-weight:500;">로그인</span></div>
         </div>
       </div>
 
@@ -759,9 +793,9 @@ const labels = [
   'S04 — 프로필 상세','S05 — 고용 요청','S06 — 결제',
   'S07 — 활동 모니터링','S08 — 만족도 평가','S09 — 마이페이지',
   'S10 — 마이 (고용인)','S11 — 마이 (가사도우미)','S12 — 마이 (관리자)',
-  'S13 — 검색','S14 — 메시지',
+  'S13 — 검색','S14 — 메시지','S00 — 로그인',
 ];
-const ids = ['s01','s02','s03','s04','s05','s06','s07','s08','s09','s10','s11','s12','s13','s14'];
+const ids = ['s01','s02','s03','s04','s05','s06','s07','s08','s09','s10','s11','s12','s13','s14','s00'];
 let cur = 0;
 const history = [];
 
@@ -839,6 +873,19 @@ function toast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
 }
+
+// Scale phone to fit viewport
+function fitPhone() {
+  const wrap = document.querySelector('.phone-wrap');
+  const scale = Math.min(1, (window.innerHeight - 16) / 812);
+  wrap.style.transform = `scale(${scale})`;
+  wrap.style.transformOrigin = 'center center';
+  const diff = 812 * (1 - scale);
+  wrap.style.marginTop = `-${diff / 2}px`;
+  wrap.style.marginBottom = `-${diff / 2}px`;
+}
+fitPhone();
+window.addEventListener('resize', fitPhone);
 
 // Keyboard navigation
 document.addEventListener('keydown', e => {
