@@ -5,24 +5,24 @@
 <title>길냥이 — 모바일 와이어프레임</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; display: flex; height: 100vh; overflow: hidden; }
+body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; display: flex; height: 100vh; overflow: hidden; align-items: center; justify-content: center; }
 
-.sidebar { width: 210px; background: #12122a; overflow-y: auto; flex-shrink: 0; display: flex; flex-direction: column; }
-.sidebar-header { padding: 20px 16px 12px; border-bottom: 1px solid #2a2a4a; }
-.sidebar-header h2 { color: #FF8C26; font-size: 15px; font-weight: bold; }
-.sidebar-header p { color: #9E876B; font-size: 11px; margin-top: 4px; }
-.screen-btn { display: block; width: 100%; padding: 10px 16px; text-align: left; background: none; border: none; color: #9E876B; cursor: pointer; font-size: 12px; transition: all 0.15s; border-left: 3px solid transparent; }
-.screen-btn:hover { background: rgba(255,140,38,0.08); color: #FFEDD1; }
-.screen-btn.active { background: rgba(255,140,38,0.15); color: #FF8C26; font-weight: bold; border-left-color: #FF8C26; }
+.main { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+.phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 0; }
+.phone-nav { display: none; }
+.screen-label { display: none; }
+.nav-btn { display: none; }
 
-.main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; overflow: auto; }
-.phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.phone-nav { display: flex; gap: 12px; align-items: center; }
-.nav-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #ccc; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
-.nav-btn:hover { background: rgba(255,140,38,0.2); border-color: #FF8C26; color: white; }
-.screen-label { color: #9E876B; font-size: 13px; min-width: 200px; text-align: center; }
+/* Screen picker overlay */
+.screen-picker { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); border-radius: 24px; padding: 6px 8px; }
+.pick-arrow { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+.pick-arrow:hover { background: rgba(255,140,38,0.4); }
+.pick-label { color: white; font-size: 12px; min-width: 160px; text-align: center; font-family: 'Apple SD Gothic Neo', sans-serif; }
+.pick-dots { display: flex; gap: 4px; align-items: center; }
+.pick-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.25); cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
+.pick-dot.active { background: #FF8C26; width: 18px; border-radius: 3px; }
 
-.phone { width: 375px; height: 812px; background: #FCF7ED; border-radius: 44px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 10px #111, 0 0 0 11px #333; position: relative; }
+.phone { width: 375px; height: 812px; background: #FCF7ED; overflow: hidden; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
 
 .screen { display: none; flex-direction: column; height: 100%; background: #FCF7ED; }
 .screen.active { display: flex; }
@@ -147,34 +147,15 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="sidebar-header">
-    <h2>🐱 길냥이</h2>
-    <p>모바일 와이어프레임 S01–S14</p>
-  </div>
-  <button class="screen-btn active" onclick="goTo(0)">S01 — 스플래시</button>
-  <button class="screen-btn" onclick="goTo(1)">S02 — 홈 (지도탐색)</button>
-  <button class="screen-btn" onclick="goTo(2)">S03 — 길냥이 목록</button>
-  <button class="screen-btn" onclick="goTo(3)">S04 — 프로필 상세</button>
-  <button class="screen-btn" onclick="goTo(4)">S05 — 고용 요청</button>
-  <button class="screen-btn" onclick="goTo(5)">S06 — 결제</button>
-  <button class="screen-btn" onclick="goTo(6)">S07 — 활동 모니터링</button>
-  <button class="screen-btn" onclick="goTo(7)">S08 — 만족도 평가</button>
-  <button class="screen-btn" onclick="goTo(8)">S09 — 마이페이지</button>
-  <button class="screen-btn" onclick="goTo(9)">S10 — 마이 (고용인)</button>
-  <button class="screen-btn" onclick="goTo(10)">S11 — 마이 (가사도우미)</button>
-  <button class="screen-btn" onclick="goTo(11)">S12 — 마이 (관리자)</button>
-  <button class="screen-btn" onclick="goTo(12)">S13 — 검색</button>
-  <button class="screen-btn" onclick="goTo(13)">S14 — 메시지</button>
+<div class="screen-picker">
+  <button class="pick-arrow" onclick="prev()">&#8592;</button>
+  <span class="pick-label" id="screen-label">S01 — 스플래시</span>
+  <button class="pick-arrow" onclick="next()">&#8594;</button>
 </div>
 
 <div class="main">
   <div class="phone-wrap">
-    <div class="phone-nav">
-      <button class="nav-btn" onclick="prev()">← 이전</button>
-      <span class="screen-label" id="screen-label">S01 — 스플래시</span>
-      <button class="nav-btn" onclick="next()">다음 →</button>
-    </div>
+    <div class="phone-nav"></div>
 
     <div class="phone">
 
@@ -787,10 +768,8 @@ const history = [];
 function goTo(n, addHistory = true) {
   if (addHistory && n !== cur) history.push(cur);
   document.getElementById(ids[cur]).classList.remove('active');
-  document.querySelectorAll('.screen-btn')[cur].classList.remove('active');
   cur = n;
   document.getElementById(ids[cur]).classList.add('active');
-  document.querySelectorAll('.screen-btn')[cur].classList.add('active');
   document.getElementById('screen-label').textContent = labels[cur];
   document.getElementById(ids[cur]).querySelector('.content')?.scrollTo(0, 0);
 }
