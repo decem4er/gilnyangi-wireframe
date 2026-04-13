@@ -121,6 +121,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
 
 /* ── Utils ── */
 .r { display: flex; align-items: center; }
+.r.stretch { align-items: stretch; }
 .c { display: flex; flex-direction: column; }
 .btw { justify-content: space-between; }
 .ctr { justify-content: center; align-items: center; }
@@ -170,7 +171,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
       <div class="btn-s" style="height:40px;padding:0 20px;font-size:14px;" onclick="goTo(1)">회원가입</div>
     </div>
   </div>
-  <div class="r fill">
+  <div class="r fill stretch">
     <div class="login-left">
       <div style="width:80px;height:80px;background:var(--p);border-radius:40px;"></div>
       <div style="font-size:44px;font-weight:bold;color:var(--td);">길냥이</div>
@@ -232,7 +233,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
       <div class="gnb-avatar"></div>
     </div>
   </div>
-  <div class="r fill" style="overflow:hidden;">
+  <div class="r fill stretch" style="overflow:hidden;">
     <div class="map-area" style="align-items:flex-start;justify-content:flex-start;padding:32px;">
       <span style="font-size:28px;color:var(--tl);">[ 지도 영역 ]</span>
       <div style="display:flex;gap:14px;align-items:center;padding:20px 0;flex-wrap:wrap;">
@@ -319,7 +320,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
       <div class="gnb-icon-btn"></div><div class="gnb-avatar"></div>
     </div>
   </div>
-  <div class="r fill" style="overflow:hidden;">
+  <div class="r fill stretch" style="overflow:hidden;">
     <!-- Filter sidebar -->
     <div class="c" style="width:320px;background:var(--pl);padding:24px;overflow-y:auto;flex-shrink:0;">
       <div style="font-size:20px;font-weight:bold;color:var(--td);margin-bottom:16px;">필터</div>
@@ -380,7 +381,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
     </div>
     <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
   </div>
-  <div class="r fill" style="overflow:hidden;padding:28px 40px;gap:28px;">
+  <div class="r fill stretch" style="overflow:hidden;padding:28px 40px;gap:28px;">
     <!-- Left -->
     <div class="c gap16" style="width:460px;flex-shrink:0;">
       <div style="width:460px;height:340px;background:var(--av);border-radius:14px;"></div>
@@ -449,7 +450,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
     <div class="gnb-nav"><div class="gnb-nav-item act" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
     <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
   </div>
-  <div class="r fill" style="overflow:hidden;">
+  <div class="r fill stretch" style="overflow:hidden;">
     <!-- Left -->
     <div class="scroll c gap20" style="flex:1;background:white;padding:40px 48px;">
       <div style="font-size:24px;font-weight:bold;color:var(--td);">고용 요청</div>
@@ -499,7 +500,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
     <div class="gnb-nav"><div class="gnb-nav-item act" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
     <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
   </div>
-  <div class="r fill" style="overflow:hidden;">
+  <div class="r fill stretch" style="overflow:hidden;">
     <div class="scroll c gap20 fill" style="background:white;padding:40px 48px;">
       <div style="font-size:24px;font-weight:bold;color:var(--td);">주문 요약</div>
       <div class="r gap24" style="background:var(--pl);border-radius:14px;padding:20px 24px;align-items:center;">
@@ -544,7 +545,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
     <div class="gnb-nav"><div class="gnb-nav-item" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item act" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
     <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
   </div>
-  <div class="r fill" style="overflow:hidden;">
+  <div class="r fill stretch" style="overflow:hidden;">
     <div class="c fill" style="padding:24px 28px;gap:16px;overflow:hidden;">
       <div style="flex:1;background:var(--av);border-radius:14px;display:flex;flex-direction:column;align-items:flex-start;padding:14px;gap:10px;overflow:hidden;">
         <div class="live-tag">● LIVE</div>
@@ -614,7 +615,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
     <div class="gnb-nav"><div class="gnb-nav-item act" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
     <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
   </div>
-  <div class="r fill" style="overflow:hidden;">
+  <div class="r fill stretch" style="overflow:hidden;">
     <div class="sidebar">
       <div class="sidebar-prof"><div class="sidebar-av"></div><div style="font-size:20px;font-weight:bold;color:white;">박지수</div><div style="font-size:14px;color:rgba(255,255,255,0.8);">고용인</div></div>
       <div class="sidebar-item act" onclick="goTo(9)">대시보드</div>
@@ -630,7 +631,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
         <script>[['45','총 고용'],['3','진행 중'],['5','찜한 냥이'],['₩132K','총 지출']].forEach(([v,l])=>{document.write(`<div class="stat-item-d"><div style="font-size:32px;font-weight:bold;color:var(--td);">${v}</div><div style="font-size:14px;color:var(--tl);">${l}</div></div>`);});</script>
       </div>
       <div class="div"></div>
-      <div class="r fill" style="overflow:hidden;">
+      <div class="r fill stretch" style="overflow:hidden;">
         <div class="scroll c gap12" style="flex:1;padding:24px 40px;">
           <div style="font-size:18px;font-weight:bold;color:var(--td);">최근 고용 내역</div>
           <script>[['치즈','해충박멸','04.05','badge-pl','업무완료'],['나비','청소','03.28','badge-g','보상완료'],['고등어','쥐퇴치','03.10','badge-pl','업무완료'],['삼색이','야간순찰','02.28','badge-g','보상완료']].forEach(([n,sp,d,bc,st])=>{document.write(`<div class="r gap14" style="background:white;border-radius:12px;padding:12px 20px;align-items:center;cursor:pointer;"><div class="av" style="width:44px;height:44px;"></div><div class="c gap4 fill"><span style="font-size:16px;font-weight:bold;color:var(--td);">${n}</span><span style="font-size:13px;color:var(--tl);">${sp} · ${d}</span></div><div class="badge ${bc}">${st}</div></div>`);});</script>
@@ -654,7 +655,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
     <div class="gnb-nav"><div class="gnb-nav-item act" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
     <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
   </div>
-  <div class="r fill" style="overflow:hidden;">
+  <div class="r fill stretch" style="overflow:hidden;">
     <div class="sidebar">
       <div class="sidebar-prof"><div class="sidebar-av"></div><div style="font-size:20px;font-weight:bold;color:white;">박지수</div><div style="font-size:14px;color:rgba(255,255,255,0.8);">고용인</div></div>
       <div class="sidebar-item" onclick="goTo(9)">대시보드</div>
@@ -666,7 +667,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
     <div class="main-area">
       <div class="main-head"><span style="font-size:22px;font-weight:bold;color:var(--td);">고용 내역 및 찜한 냥이</span></div>
       <div class="div"></div>
-      <div class="r fill" style="overflow:hidden;">
+      <div class="r fill stretch" style="overflow:hidden;">
         <div class="scroll c gap12" style="flex:1;padding:24px 40px;">
           <div style="font-size:18px;font-weight:bold;color:var(--td);">고용 내역</div>
           <script>[['치즈','해충박멸','04.05','badge-pl','업무완료'],['나비','청소','03.28','badge-g','보상완료'],['고등어','쥐퇴치','03.10','badge-pl','업무완료'],['삼색이','야간순찰','02.28','badge-g','보상완료'],['호랑이','창고해충','02.15','badge-g','보상완료']].forEach(([n,sp,d,bc,st])=>{document.write(`<div class="r gap14" style="background:white;border-radius:12px;padding:12px 20px;align-items:center;cursor:pointer;"><div class="av" style="width:44px;height:44px;"></div><div class="c gap4 fill"><span style="font-size:16px;font-weight:bold;color:var(--td);">${n}</span><span style="font-size:13px;color:var(--tl);">${sp} · ${d}</span></div><div class="badge ${bc}">${st}</div></div>`);});</script>
@@ -690,7 +691,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
     <div class="gnb-nav"><div class="gnb-nav-item act" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
     <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
   </div>
-  <div class="r fill" style="overflow:hidden;">
+  <div class="r fill stretch" style="overflow:hidden;">
     <div class="sidebar">
       <div class="sidebar-prof"><div class="sidebar-av"></div><div style="font-size:20px;font-weight:bold;color:white;">치즈</div><div style="font-size:14px;color:rgba(255,255,255,0.8);">가사도우미</div></div>
       <div class="sidebar-item act">대시보드</div>
@@ -706,7 +707,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
         <script>[['45','총 고용'],['4.8','평균 평점'],['₩225K','총 수익'],['2','진행 중']].forEach(([v,l])=>{document.write(`<div class="stat-item-d"><div style="font-size:30px;font-weight:bold;color:var(--td);">${v}</div><div style="font-size:13px;color:var(--tl);">${l}</div></div>`);});</script>
       </div>
       <div class="div"></div>
-      <div class="r fill" style="overflow:hidden;">
+      <div class="r fill stretch" style="overflow:hidden;">
         <div class="scroll c gap12" style="flex:1;padding:24px 40px;">
           <div class="r btw" style="background:white;border-radius:12px;padding:0 20px;height:60px;align-items:center;">
             <span style="font-size:15px;color:var(--td);">"쥐 잡기 5년 경력! 야간 출동 환영합니다"</span>
@@ -736,7 +737,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
     <div class="gnb-nav"><div class="gnb-nav-item act" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item" onclick="goTo(14)">메시지</div></div>
     <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
   </div>
-  <div class="r fill" style="overflow:hidden;">
+  <div class="r fill stretch" style="overflow:hidden;">
     <div class="sidebar orange">
       <div class="sidebar-prof"><div class="sidebar-av"></div><div style="font-size:20px;font-weight:bold;color:white;">Admin</div><div style="font-size:14px;color:rgba(255,255,255,0.8);">관리자</div></div>
       <div class="sidebar-item act">대시보드</div>
@@ -752,7 +753,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
         <script>[['248','총 가입자'],['18','오늘 고용'],['3','신고 접수'],['₩2.4M','이달 매출']].forEach(([v,l])=>{document.write(`<div class="stat-item-d"><div style="font-size:30px;font-weight:bold;color:white;">${v}</div><div style="font-size:13px;color:rgba(255,255,200,0.9);">${l}</div></div>`);});</script>
       </div>
       <div class="div"></div>
-      <div class="r fill" style="overflow:hidden;">
+      <div class="r fill stretch" style="overflow:hidden;">
         <div class="scroll c gap12" style="flex:1;padding:24px 40px;">
           <div style="font-size:18px;font-weight:bold;color:var(--td);">회원 관리</div>
           <script>[['고용인 목록','32명 등록',false],['가사도우미 목록','28명 등록',false],['신규 가입 검토','5명 대기',true],['정지 회원','2명',false]].forEach(([t,s,al])=>{document.write(`<div class="admin-row"><div class="c gap8"><span style="font-size:16px;font-weight:500;color:var(--td);">${t}</span><span style="font-size:14px;color:var(--tl);">${s}</span></div>${al?`<div class="alert-dot">!</div>`:`<span style="font-size:15px;color:var(--tl);">›</span>`}</div>`);});</script>
@@ -782,7 +783,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
       </div>
       <div class="btn-p" style="width:120px;height:52px;">검색</div>
     </div>
-    <div class="r fill" style="overflow:hidden;">
+    <div class="r fill stretch" style="overflow:hidden;">
       <!-- Left: filters -->
       <div class="c" style="width:380px;background:var(--pl);padding:24px;overflow-y:auto;flex-shrink:0;gap:16px;">
         <div style="font-size:16px;font-weight:bold;color:var(--td);">최근 검색어</div>
@@ -823,7 +824,7 @@ body { background: #1a1a2e; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 
     <div class="gnb-nav"><div class="gnb-nav-item" onclick="goTo(2)">홈</div><div class="gnb-nav-item" onclick="goTo(3)">탐색</div><div class="gnb-nav-item" onclick="goTo(9)">고용내역</div><div class="gnb-nav-item act" onclick="goTo(14)">메시지</div></div>
     <div class="gnb-right"><div class="gnb-search" onclick="goTo(13)"><div style="width:18px;height:18px;background:var(--tl);border-radius:9px;flex-shrink:0;"></div><span style="font-size:14px;color:var(--tl);">검색</span></div><div class="gnb-icon-btn"></div><div class="gnb-avatar"></div></div>
   </div>
-  <div class="r fill" style="overflow:hidden;">
+  <div class="r fill stretch" style="overflow:hidden;">
     <!-- Message list -->
     <div class="c" style="width:440px;background:white;overflow:hidden;flex-shrink:0;border-right:1px solid var(--bw);">
       <div class="r btw" style="height:68px;padding:0 20px;border-bottom:1px solid var(--bw);align-items:center;flex-shrink:0;">
