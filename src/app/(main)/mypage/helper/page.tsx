@@ -2,6 +2,8 @@
 import Sidebar from "@/components/Sidebar";
 import Badge from "@/components/Badge";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 const ITEMS = [
   { label: "대시보드" },
@@ -51,8 +53,10 @@ const SPECIALTIES = ["해충박멸", "청소", "야간순찰", "쥐 퇴치", "�
 type FilterType = "daily" | "monthly" | "custom";
 type JobFilter = "전체" | "업무중" | "업무완료" | "보상완료";
 
-export default function HelperMyPage() {
-  const [activeIdx, setActiveIdx] = useState(0);
+function HelperMyPageInner() {
+  const params = useSearchParams();
+  const initialTab = parseInt(params.get("tab") ?? "0");
+  const [activeIdx, setActiveIdx] = useState(initialTab);
 
   // 업무 현황 state
   const [jobFilter, setJobFilter] = useState<JobFilter>("전체");
@@ -480,5 +484,13 @@ export default function HelperMyPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function HelperMyPage() {
+  return (
+    <Suspense>
+      <HelperMyPageInner />
+    </Suspense>
   );
 }
