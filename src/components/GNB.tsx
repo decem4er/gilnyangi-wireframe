@@ -32,10 +32,10 @@ export default function GNB() {
           <Link
             key={item.href}
             href={item.href}
-            className={`px-7 flex items-center text-[16px] transition-colors ${
+            className={`px-7 flex items-center text-[16px] transition-colors border-b-2 ${
               isActive(item.href)
-                ? "text-p font-medium"
-                : "text-tm hover:text-p"
+                ? "text-p font-medium border-p"
+                : "text-tm hover:text-p border-transparent"
             }`}
           >
             {item.label}
