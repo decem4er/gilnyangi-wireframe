@@ -64,74 +64,72 @@ export default function MyPage() {
               ))}
             </div>
 
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex flex-1 min-h-0">
-                {/* Left: Recent hires */}
-                <div className="flex-1 flex flex-col gap-3 pl-10 pr-7 py-6 overflow-y-auto">
-                  <h2 className="text-[18px] font-bold text-td flex-shrink-0">최근 고용 내역</h2>
-                  {HIRE_RECORDS.map((rec) => (
+            <div className="flex flex-1 min-h-0">
+              {/* Left: Recent hires + Cat Ratings */}
+              <div className="flex-1 flex flex-col gap-3 pl-10 pr-7 py-6 overflow-y-auto">
+                <h2 className="text-[18px] font-bold text-td flex-shrink-0">최근 고용 내역</h2>
+                {HIRE_RECORDS.map((rec) => (
+                  <div
+                    key={rec.id}
+                    onClick={() => router.push(`/records/${rec.id}`)}
+                    className="bg-white h-[60px] rounded-xl flex items-center pl-[14px] pr-5 gap-3 cursor-pointer hover:brightness-97 transition-all flex-shrink-0"
+                  >
+                    <div className="w-11 h-11 rounded-full bg-av flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[16px] font-bold text-td">{rec.catName}</p>
+                      <p className="text-[13px] text-tl">{rec.spec} · {rec.date}</p>
+                    </div>
+                    <Badge status={rec.status} />
+                  </div>
+                ))}
+
+                {/* Cat Ratings */}
+                <div className="bg-white rounded-xl px-4 py-5 mt-2 flex-shrink-0">
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-[18px] font-bold text-td">고양이의 평가</h2>
+                    <button onClick={() => router.push("/records")} className="text-[13px] text-p hover:underline">전체 보기</button>
+                  </div>
+                  {CAT_RATINGS.map((r, i, arr) => (
                     <div
-                      key={rec.id}
-                      onClick={() => router.push(`/records/${rec.id}`)}
-                      className="bg-white h-[60px] rounded-xl flex items-center pl-[14px] pr-5 gap-3 cursor-pointer hover:brightness-97 transition-all flex-shrink-0"
+                      key={r.catName}
+                      onClick={() => router.push("/records")}
+                      className={`flex items-center justify-between py-4 cursor-pointer hover:bg-bg rounded-xl px-2 transition-all ${i < arr.length - 1 ? "border-b border-bg" : ""}`}
                     >
-                      <div className="w-11 h-11 rounded-full bg-av flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[16px] font-bold text-td">{rec.catName}</p>
-                        <p className="text-[13px] text-tl">{rec.spec} · {rec.date}</p>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-av flex-shrink-0" />
+                        <div>
+                          <p className="text-[15px] font-bold text-td">{r.catName}</p>
+                          <p className="text-[13px] text-tm">{r.spec} · {r.date}</p>
+                        </div>
                       </div>
-                      <Badge status={rec.status} />
+                      <div className="flex items-center gap-1.5">
+                        {[1,2,3,4,5].map(s => (
+                          <span key={s} className={`text-[18px] ${s <= Math.floor(r.avg) ? "text-p" : "text-bw"}`}>★</span>
+                        ))}
+                        <span className="text-[14px] font-bold text-p ml-1">{r.avg}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
-
-                <div className="bg-bw w-px flex-shrink-0" />
-
-                {/* Right: Favorites */}
-                <div className="flex-1 flex flex-col gap-[14px] p-6 overflow-y-auto">
-                  <h2 className="text-[18px] font-bold text-td flex-shrink-0">찜한 냥이</h2>
-                  <div className="flex flex-wrap gap-[14px]">
-                    {CATS.slice(0, 5).map((cat) => (
-                      <div
-                        key={cat.id}
-                        onClick={() => router.push(`/cats/${cat.id}`)}
-                        className="bg-white flex flex-col items-center gap-2 p-[14px] rounded-[14px] cursor-pointer hover:brightness-97 transition-all"
-                      >
-                        <div className="w-16 h-16 rounded-full bg-av" />
-                        <p className="text-[14px] font-medium text-td">{cat.name}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
               </div>
 
-              {/* Cat Ratings Card */}
-              <div className="bg-white border-t border-bw flex-shrink-0 px-6 py-5">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-[18px] font-bold text-td">고양이의 평가</h2>
-                  <button onClick={() => router.push("/records")} className="text-[13px] text-p hover:underline">전체 보기</button>
+              <div className="bg-bw w-px flex-shrink-0" />
+
+              {/* Right: Favorites */}
+              <div className="flex-1 flex flex-col gap-[14px] p-6 overflow-y-auto">
+                <h2 className="text-[18px] font-bold text-td flex-shrink-0">찜한 냥이</h2>
+                <div className="flex flex-wrap gap-[14px]">
+                  {CATS.slice(0, 5).map((cat) => (
+                    <div
+                      key={cat.id}
+                      onClick={() => router.push(`/cats/${cat.id}`)}
+                      className="bg-white flex flex-col items-center gap-2 p-[14px] rounded-[14px] cursor-pointer hover:brightness-97 transition-all"
+                    >
+                      <div className="w-16 h-16 rounded-full bg-av" />
+                      <p className="text-[14px] font-medium text-td">{cat.name}</p>
+                    </div>
+                  ))}
                 </div>
-                {CAT_RATINGS.map((r, i, arr) => (
-                  <div
-                    key={r.catName}
-                    onClick={() => router.push("/records")}
-                    className={`flex items-center justify-between py-4 cursor-pointer hover:bg-bg rounded-xl px-2 transition-all ${i < arr.length - 1 ? "border-b border-bg" : ""}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-av flex-shrink-0" />
-                      <div>
-                        <p className="text-[15px] font-bold text-td">{r.catName}</p>
-                        <p className="text-[13px] text-tm">{r.spec} · {r.date}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      {[1,2,3,4,5].map(s => (
-                        <span key={s} className={`text-[18px] ${s <= Math.floor(r.avg) ? "text-p" : "text-bw"}`}>★</span>
-                      ))}
-                      <span className="text-[14px] font-bold text-p ml-1">{r.avg}</span>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           </>
