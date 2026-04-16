@@ -1,0 +1,10 @@
+import GNB from "@/components/GNB";
+
+export default function MainLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="h-full flex flex-col">
+      <GNB />
+      <main className="flex-1 overflow-auto">{children}</main>
+    </div>
+  );
+}
