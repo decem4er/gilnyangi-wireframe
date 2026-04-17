@@ -139,55 +139,54 @@ export default function MyPage() {
         {activeIdx === 1 && (
           <>
             <div className="bg-white flex h-[68px] items-center px-10 flex-shrink-0 border-b border-bw">
-              <h1 className="text-[22px] font-bold text-td">고용 내역 및 찜한 냥이</h1>
+              <h1 className="text-[22px] font-bold text-td">고용 내역</h1>
             </div>
+            <div className="flex-1 flex flex-col gap-3 px-10 py-6 overflow-y-auto">
+              {HIRE_RECORDS.map((rec) => (
+                <div
+                  key={rec.id}
+                  onClick={() => router.push(`/records/${rec.id}`)}
+                  className="bg-white h-[60px] rounded-xl flex items-center pl-[14px] pr-5 gap-3 cursor-pointer hover:brightness-97 transition-all flex-shrink-0"
+                >
+                  <div className="w-11 h-11 rounded-full bg-av flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[16px] font-bold text-td">{rec.catName}</p>
+                    <p className="text-[13px] text-tl">{rec.spec} · {rec.date}</p>
+                  </div>
+                  <Badge status={rec.status} />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
-            <div className="flex flex-1 min-h-0">
-              {/* Left: Hire history */}
-              <div className="flex-1 flex flex-col gap-3 pl-10 pr-6 py-6 overflow-y-auto">
-                <h2 className="text-[18px] font-bold text-td flex-shrink-0">고용 내역</h2>
-                {HIRE_RECORDS.map((rec) => (
-                  <div
-                    key={rec.id}
-                    onClick={() => router.push(`/records/${rec.id}`)}
-                    className="bg-white h-[60px] rounded-xl flex items-center pl-[14px] pr-5 gap-3 cursor-pointer hover:brightness-97 transition-all flex-shrink-0"
-                  >
-                    <div className="w-11 h-11 rounded-full bg-av flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[16px] font-bold text-td">{rec.catName}</p>
-                      <p className="text-[13px] text-tl">{rec.spec} · {rec.date}</p>
-                    </div>
-                    <Badge status={rec.status} />
+        {/* D11: 찜한 냥이 */}
+        {activeIdx === 2 && (
+          <>
+            <div className="bg-white flex h-[68px] items-center px-10 flex-shrink-0 border-b border-bw">
+              <h1 className="text-[22px] font-bold text-td">찜한 냥이</h1>
+            </div>
+            <div className="flex-1 overflow-y-auto px-10 py-6">
+              <div className="flex flex-wrap gap-4">
+                {CATS.slice(0, 6).map((cat) => (
+                  <div key={cat.id} className="bg-white flex flex-col items-center gap-[10px] p-[14px] rounded-[14px]">
+                    <div className="w-[68px] h-[68px] rounded-full bg-av" />
+                    <p className="text-[14px] font-medium text-td">{cat.name}</p>
+                    <button
+                      onClick={() => router.push(`/cats/${cat.id}`)}
+                      className="bg-p text-white text-[12px] font-medium px-3 h-7 rounded-[14px] hover:brightness-105 transition-all"
+                    >
+                      고용
+                    </button>
                   </div>
                 ))}
-              </div>
-
-              <div className="bg-bw w-px flex-shrink-0" />
-
-              {/* Right: Favorites with hire buttons */}
-              <div className="flex-1 flex flex-col gap-[14px] pl-6 pr-7 py-6 overflow-y-auto">
-                <h2 className="text-[18px] font-bold text-td flex-shrink-0">찜한 냥이</h2>
-                <div className="flex flex-wrap gap-4">
-                  {CATS.slice(0, 6).map((cat) => (
-                    <div key={cat.id} className="bg-white flex flex-col items-center gap-[10px] p-[14px] rounded-[14px]">
-                      <div className="w-[68px] h-[68px] rounded-full bg-av" />
-                      <p className="text-[14px] font-medium text-td">{cat.name}</p>
-                      <button
-                        onClick={() => router.push(`/cats/${cat.id}`)}
-                        className="bg-p text-white text-[12px] font-medium px-3 h-7 rounded-[14px] hover:brightness-105 transition-all"
-                      >
-                        고용
-                      </button>
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
           </>
         )}
 
         {/* Other tabs: placeholder */}
-        {activeIdx > 1 && (
+        {activeIdx > 2 && (
           <div className="flex-1 flex flex-col p-8 gap-4 overflow-y-auto">
             <h1 className="text-[26px] font-bold text-td">{ITEMS[activeIdx].label}</h1>
             <div className="bg-white rounded-2xl p-12 flex items-center justify-center">
