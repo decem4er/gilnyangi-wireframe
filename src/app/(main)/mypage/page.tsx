@@ -6,6 +6,14 @@ import { HIRE_RECORDS, CATS } from "@/lib/mock";
 import Badge from "@/components/Badge";
 import { useState } from "react";
 
+const PAYMENT_RECORDS = [
+  { id: "1", catName: "치즈", spec: "해충박멸", date: "2026.04.05", amount: 35000, method: "카드결제", status: "결제완료" },
+  { id: "2", catName: "나비", spec: "청소",     date: "2026.03.28", amount: 28000, method: "카드결제", status: "결제완료" },
+  { id: "3", catName: "고등어", spec: "쥐퇴치", date: "2026.03.10", amount: 42000, method: "카드결제", status: "결제완료" },
+  { id: "4", catName: "삼색이", spec: "야간순찰", date: "2026.02.28", amount: 30000, method: "카드결제", status: "결제완료" },
+  { id: "5", catName: "호랑이", spec: "창고해충", date: "2026.02.15", amount: 25000, method: "카드결제", status: "결제완료" },
+];
+
 const ITEMS = [
   { label: "대시보드" },
   { label: "고용 내역" },
@@ -185,21 +193,119 @@ export default function MyPage() {
           </>
         )}
 
-        {/* Other tabs: placeholder */}
-        {activeIdx > 2 && (
-          <div className="flex-1 flex flex-col p-8 gap-4 overflow-y-auto">
-            <h1 className="text-[26px] font-bold text-td">{ITEMS[activeIdx].label}</h1>
-            <div className="bg-white rounded-2xl p-12 flex items-center justify-center">
-              <p className="text-tl text-[15px]">해당 기능은 준비 중입니다.</p>
+        {/* D12: 결제 내역 */}
+        {activeIdx === 3 && (
+          <>
+            <div className="bg-white flex h-[68px] items-center px-10 flex-shrink-0 border-b border-bw">
+              <h1 className="text-[22px] font-bold text-td">결제 내역</h1>
             </div>
-          </div>
+            <div className="flex-1 flex flex-col gap-4 px-10 py-6 overflow-y-auto">
+              {/* 요약 카드 */}
+              <div className="bg-white rounded-2xl px-8 py-5 flex items-center justify-between flex-shrink-0">
+                <div>
+                  <p className="text-[13px] text-tl mb-1">총 결제 금액</p>
+                  <p className="text-[28px] font-bold text-td">₩{PAYMENT_RECORDS.reduce((s, r) => s + r.amount, 0).toLocaleString()}</p>
+                </div>
+                <div className="flex gap-6">
+                  <div className="text-right">
+                    <p className="text-[13px] text-tl mb-1">결제 건수</p>
+                    <p className="text-[20px] font-bold text-td">{PAYMENT_RECORDS.length}건</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[13px] text-tl mb-1">평균 결제</p>
+                    <p className="text-[20px] font-bold text-td">₩{Math.round(PAYMENT_RECORDS.reduce((s, r) => s + r.amount, 0) / PAYMENT_RECORDS.length).toLocaleString()}</p>
+                  </div>
+                </div>
+              </div>
+              {/* 결제 목록 */}
+              <div className="flex flex-col gap-2 flex-shrink-0">
+                {PAYMENT_RECORDS.map((rec) => (
+                  <div key={rec.id} className="bg-white rounded-xl flex items-center pl-[14px] pr-5 h-[72px] gap-3">
+                    <div className="w-11 h-11 rounded-full bg-av flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[15px] font-bold text-td">{rec.catName} · {rec.spec}</p>
+                      <p className="text-[13px] text-tl">{rec.date} · {rec.method}</p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-[16px] font-bold text-td">₩{rec.amount.toLocaleString()}</p>
+                      <span className="text-[12px] text-green-600 font-medium">{rec.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
         )}
 
-        <div className="px-8 py-4 flex-shrink-0">
-          <button onClick={handleLogout} className="text-[14px] text-red hover:underline">
-            로그아웃
-          </button>
-        </div>
+        {/* D13: 설정 */}
+        {activeIdx === 4 && (
+          <>
+            <div className="bg-white flex h-[68px] items-center px-10 flex-shrink-0 border-b border-bw">
+              <h1 className="text-[22px] font-bold text-td">설정</h1>
+            </div>
+            <div className="flex-1 overflow-y-auto px-10 py-6 flex flex-col gap-5">
+              {/* 프로필 설정 */}
+              <div className="bg-white rounded-2xl px-6 py-5">
+                <h2 className="text-[16px] font-bold text-td mb-4">프로필 설정</h2>
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-[64px] h-[64px] rounded-full bg-av flex-shrink-0" />
+                  <div>
+                    <p className="text-[16px] font-bold text-td">박지수</p>
+                    <p className="text-[13px] text-tl">jisoo@example.com</p>
+                  </div>
+                  <button className="ml-auto text-[13px] text-p border border-p rounded-full px-4 h-8 hover:bg-pl transition-all">수정</button>
+                </div>
+                {[
+                  { label: "이름", value: "박지수" },
+                  { label: "연락처", value: "010-1234-5678" },
+                  { label: "주소", value: "서울 마포구" },
+                ].map((f) => (
+                  <div key={f.label} className="flex items-center justify-between py-3 border-t border-bg">
+                    <span className="text-[14px] text-tl">{f.label}</span>
+                    <span className="text-[14px] text-td font-medium">{f.value}</span>
+                  </div>
+                ))}
+              </div>
+              {/* 알림 설정 */}
+              <div className="bg-white rounded-2xl px-6 py-5">
+                <h2 className="text-[16px] font-bold text-td mb-1">알림 설정</h2>
+                <p className="text-[13px] text-tl mb-4">받을 알림 유형을 선택하세요</p>
+                {[
+                  { label: "업무 시작 알림", desc: "냥이가 업무를 시작할 때 알림" },
+                  { label: "업무 완료 알림", desc: "업무가 완료되었을 때 알림" },
+                  { label: "메시지 알림",   desc: "새 메시지를 받았을 때 알림" },
+                  { label: "결제 알림",     desc: "결제가 처리되었을 때 알림" },
+                ].map((n, i, arr) => (
+                  <div key={n.label} className={`flex items-center justify-between py-3 ${i < arr.length - 1 ? "border-b border-bg" : ""}`}>
+                    <div>
+                      <p className="text-[14px] font-medium text-td">{n.label}</p>
+                      <p className="text-[12px] text-tl">{n.desc}</p>
+                    </div>
+                    <div className="w-11 h-6 bg-p rounded-full flex-shrink-0" />
+                  </div>
+                ))}
+              </div>
+              {/* 계정 관리 */}
+              <div className="bg-white rounded-2xl px-6 py-5">
+                <h2 className="text-[16px] font-bold text-td mb-1">계정 관리</h2>
+                <div className="flex flex-col gap-1 mt-3">
+                  <button className="text-left py-3 text-[14px] text-td hover:text-p transition-colors border-b border-bg">비밀번호 변경</button>
+                  <button className="text-left py-3 text-[14px] text-td hover:text-p transition-colors border-b border-bg">이용약관</button>
+                  <button className="text-left py-3 text-[14px] text-td hover:text-p transition-colors border-b border-bg">개인정보처리방침</button>
+                  <button onClick={handleLogout} className="text-left py-3 text-[14px] text-red hover:underline transition-colors">로그아웃</button>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {activeIdx !== 4 && (
+          <div className="px-8 py-4 flex-shrink-0">
+            <button onClick={handleLogout} className="text-[14px] text-red hover:underline">
+              로그아웃
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
