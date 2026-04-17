@@ -72,7 +72,8 @@ function HelperMyPageInner() {
   const [appealDraft, setAppealDraft] = useState(appeal);
 
   // 설정 state
-  const [available, setAvailable] = useState(true);
+  type WorkStatus = "가능" | "업무중" | "중단" | "불가";
+  const [workStatus, setWorkStatus] = useState<WorkStatus>("가능");
   const [pushNotif, setPushNotif] = useState(true);
   const [reviewNotif, setReviewNotif] = useState(true);
   const [messageNotif, setMessageNotif] = useState(true);
@@ -94,24 +95,41 @@ function HelperMyPageInner() {
     : DAILY_REVENUE;
 
   return (
-    <div className="h-full flex">
-      <Sidebar
-        name="박지수"
-        role="가사도우미"
-        items={ITEMS}
-        activeIdx={activeIdx}
-        onSelect={setActiveIdx}
-      />
+    <div className="h-full flex flex-col md:flex-row">
+
+      {/* 모바일 상단 헤더 */}
+      <div className="md:hidden bg-white h-14 flex items-center justify-between px-5 flex-shrink-0 border-b border-bw">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-full bg-av" />
+          <div>
+            <p className="text-[14px] font-bold text-td leading-tight">박지수</p>
+            <p className="text-[11px] text-tl leading-tight">가사도우미</p>
+          </div>
+        </div>
+        <span className="text-[16px] font-bold text-td">{ITEMS[activeIdx].label}</span>
+        <div className="w-10" />
+      </div>
+
+      {/* 데스크탑 사이드바 */}
+      <div className="hidden md:block">
+        <Sidebar
+          name="박지수"
+          role="가사도우미"
+          items={ITEMS}
+          activeIdx={activeIdx}
+          onSelect={setActiveIdx}
+        />
+      </div>
 
       <div className="flex-1 flex flex-col overflow-hidden">
 
         {/* ── 대시보드 ── */}
         {activeIdx === 0 && (
           <>
-            <div className="bg-white flex h-[72px] items-center px-10 flex-shrink-0 border-b border-bw">
+            <div className="hidden md:flex bg-white h-[72px] items-center px-10 flex-shrink-0 border-b border-bw">
               <h1 className="text-[22px] font-bold text-td">가사도우미 대시보드</h1>
             </div>
-            <div className="bg-bg flex h-[100px] items-center flex-shrink-0 border-b border-bw">
+            <div className="hidden md:flex bg-bg h-[100px] items-center flex-shrink-0 border-b border-bw">
               {[
                 { label: "총 고용", value: "45" },
                 { label: "평균 평점", value: "4.8" },
@@ -124,8 +142,8 @@ function HelperMyPageInner() {
                 </div>
               ))}
             </div>
-            <div className="flex flex-1 min-h-0">
-              <div className="flex-1 flex flex-col gap-4 pl-10 pr-6 py-6 overflow-y-auto">
+            <div className="flex flex-1 min-h-0 flex-col md:flex-row">
+              <div className="flex-1 flex flex-col gap-4 px-5 md:pl-10 md:pr-6 py-5 md:py-6 overflow-y-auto">
                 <h2 className="text-[18px] font-bold text-td flex-shrink-0">나의 한줄 어필</h2>
                 <div className="bg-white h-[60px] rounded-xl flex items-center justify-between px-6 flex-shrink-0">
                   <p className="text-[15px] text-td">"{appeal}"</p>
@@ -143,8 +161,8 @@ function HelperMyPageInner() {
                   </div>
                 ))}
               </div>
-              <div className="bg-bw w-px flex-shrink-0" />
-              <div className="flex-1 flex flex-col gap-4 p-6 overflow-y-auto bg-bg">
+              <div className="hidden md:block bg-bw w-px flex-shrink-0" />
+              <div className="flex-1 flex flex-col gap-4 px-5 md:p-6 py-5 overflow-y-auto bg-bg">
                 <h2 className="text-[18px] font-bold text-td flex-shrink-0">이번 달 수익</h2>
                 <p className="text-[40px] font-bold text-p leading-none flex-shrink-0">₩78,000</p>
                 <p className="text-[14px] text-tl flex-shrink-0">전월 대비 +12%</p>
@@ -164,10 +182,10 @@ function HelperMyPageInner() {
         {/* ── 업무 현황 ── */}
         {activeIdx === 1 && (
           <>
-            <div className="bg-white flex h-[72px] items-center px-10 flex-shrink-0 border-b border-bw">
+            <div className="hidden md:flex bg-white h-[72px] items-center px-10 flex-shrink-0 border-b border-bw">
               <h1 className="text-[22px] font-bold text-td">업무 현황</h1>
             </div>
-            <div className="flex-1 flex flex-col overflow-y-auto px-10 py-6 gap-4">
+            <div className="flex-1 flex flex-col overflow-y-auto px-5 md:px-10 py-5 md:py-6 gap-4">
               {/* 필터 탭 */}
               <div className="flex gap-2 flex-shrink-0">
                 {(["전체", "업무중", "업무완료", "보상완료"] as JobFilter[]).map(f => (
@@ -220,10 +238,10 @@ function HelperMyPageInner() {
         {/* ── 수익 내역 ── */}
         {activeIdx === 2 && (
           <>
-            <div className="bg-white flex h-[72px] items-center px-10 flex-shrink-0 border-b border-bw">
+            <div className="hidden md:flex bg-white h-[72px] items-center px-10 flex-shrink-0 border-b border-bw">
               <h1 className="text-[22px] font-bold text-td">수익 내역</h1>
             </div>
-            <div className="flex-1 flex flex-col overflow-y-auto px-10 py-6 gap-5">
+            <div className="flex-1 flex flex-col overflow-y-auto px-5 md:px-10 py-5 md:py-6 gap-5">
               {/* 필터 */}
               <div className="flex gap-2 flex-shrink-0">
                 {([
@@ -327,10 +345,10 @@ function HelperMyPageInner() {
         {/* ── 프로필 관리 ── */}
         {activeIdx === 3 && (
           <>
-            <div className="bg-white flex h-[72px] items-center px-10 flex-shrink-0 border-b border-bw">
+            <div className="hidden md:flex bg-white h-[72px] items-center px-10 flex-shrink-0 border-b border-bw">
               <h1 className="text-[22px] font-bold text-td">프로필 관리</h1>
             </div>
-            <div className="flex-1 overflow-y-auto px-10 py-6 flex flex-col gap-5">
+            <div className="flex-1 overflow-y-auto px-5 md:px-10 py-5 md:py-6 flex flex-col gap-5">
               {/* 프로필 사진 */}
               <div className="bg-white rounded-xl px-6 py-5 flex items-center gap-5">
                 <div className="w-20 h-20 rounded-full bg-av flex-shrink-0" />
@@ -398,28 +416,35 @@ function HelperMyPageInner() {
         {/* ── 설정 ── */}
         {activeIdx === 4 && (
           <>
-            <div className="bg-white flex h-[72px] items-center px-10 flex-shrink-0 border-b border-bw">
+            <div className="hidden md:flex bg-white h-[72px] items-center px-10 flex-shrink-0 border-b border-bw">
               <h1 className="text-[22px] font-bold text-td">설정</h1>
             </div>
-            <div className="flex-1 overflow-y-auto px-10 py-6 flex flex-col gap-5">
+            <div className="flex-1 overflow-y-auto px-5 md:px-10 py-5 md:py-6 flex flex-col gap-5">
 
-              {/* 업무 가능 여부 */}
+              {/* 업무 상태 */}
               <div className="bg-white rounded-xl px-6 py-5 flex flex-col gap-4">
                 <h2 className="text-[16px] font-bold text-td">업무 상태</h2>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-[15px] font-medium text-td">업무 가능</p>
-                    <p className="text-[13px] text-tl mt-0.5">고용인에게 프로필이 노출됩니다</p>
-                  </div>
-                  <button
-                    onClick={() => setAvailable(v => !v)}
-                    className={`relative w-12 h-6 rounded-full transition-colors ${available ? "bg-p" : "bg-bw"}`}
-                  >
-                    <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all ${available ? "left-7" : "left-1"}`} />
-                  </button>
-                </div>
-                <div className={`rounded-lg px-4 py-3 text-[13px] font-medium ${available ? "bg-pl text-p" : "bg-bg text-tl"}`}>
-                  현재 상태: {available ? "🟢 업무 가능" : "⚫ 업무 불가"}
+                <div className="grid grid-cols-2 gap-3">
+                  {([
+                    { key: "가능",   emoji: "🟢", label: "업무 가능",  desc: "새 의뢰 수락·프로필 노출" },
+                    { key: "업무중", emoji: "🟡", label: "업무 중",    desc: "진행 중·신규 의뢰 제한" },
+                    { key: "중단",   emoji: "🟠", label: "잠시 중단",  desc: "일시 중단·의뢰 보류" },
+                    { key: "불가",   emoji: "⚫", label: "업무 불가",  desc: "프로필 비노출·의뢰 거절" },
+                  ] as { key: WorkStatus; emoji: string; label: string; desc: string }[]).map(s => (
+                    <button
+                      key={s.key}
+                      onClick={() => setWorkStatus(s.key)}
+                      className={`rounded-xl px-4 py-4 text-left flex flex-col gap-1.5 border-2 transition-all ${
+                        workStatus === s.key
+                          ? "border-p bg-pl"
+                          : "border-bw bg-bg hover:border-p/40"
+                      }`}
+                    >
+                      <span className="text-[20px] leading-none">{s.emoji}</span>
+                      <p className={`text-[14px] font-bold ${workStatus === s.key ? "text-p" : "text-td"}`}>{s.label}</p>
+                      <p className="text-[11px] text-tl leading-tight">{s.desc}</p>
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -483,6 +508,23 @@ function HelperMyPageInner() {
         )}
 
       </div>
+
+      {/* 모바일 하단 탭바 */}
+      <div className="md:hidden bg-white border-t border-bw flex-shrink-0 flex">
+        {ITEMS.map((item, i) => (
+          <button
+            key={item.label}
+            onClick={() => setActiveIdx(i)}
+            className={`flex-1 flex flex-col items-center justify-center py-2.5 gap-1 text-[10px] font-medium transition-colors ${
+              activeIdx === i ? "text-p" : "text-tl"
+            }`}
+          >
+            <div className={`w-5 h-5 rounded-md ${activeIdx === i ? "bg-p" : "bg-bw"}`} />
+            {item.label}
+          </button>
+        ))}
+      </div>
+
     </div>
   );
 }
