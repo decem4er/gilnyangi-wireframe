@@ -28,10 +28,18 @@ const CAT_RATINGS = [
   { catName: "고등어", spec: "쥐퇴치", date: "03.10", avg: 3.8 },
 ];
 
+const NOTIF_ITEMS = [
+  { label: "업무 시작 알림", desc: "냥이가 업무를 시작할 때 알림" },
+  { label: "업무 완료 알림", desc: "업무가 완료되었을 때 알림" },
+  { label: "메시지 알림",   desc: "새 메시지를 받았을 때 알림" },
+  { label: "결제 알림",     desc: "결제가 처리되었을 때 알림" },
+];
+
 export default function MyPageClient() {
   const router = useRouter();
   const { logout } = useStore();
   const [activeIdx, setActiveIdx] = useState(0);
+  const [notifOn, setNotifOn] = useState([true, true, true, true]);
 
   const handleLogout = () => {
     logout();
@@ -271,18 +279,18 @@ export default function MyPageClient() {
               <div className="bg-white rounded-2xl px-6 py-5">
                 <h2 className="text-[16px] font-bold text-td mb-1">알림 설정</h2>
                 <p className="text-[13px] text-tl mb-4">받을 알림 유형을 선택하세요</p>
-                {[
-                  { label: "업무 시작 알림", desc: "냥이가 업무를 시작할 때 알림" },
-                  { label: "업무 완료 알림", desc: "업무가 완료되었을 때 알림" },
-                  { label: "메시지 알림",   desc: "새 메시지를 받았을 때 알림" },
-                  { label: "결제 알림",     desc: "결제가 처리되었을 때 알림" },
-                ].map((n, i, arr) => (
+                {NOTIF_ITEMS.map((n, i, arr) => (
                   <div key={n.label} className={`flex items-center justify-between py-3 ${i < arr.length - 1 ? "border-b border-bg" : ""}`}>
                     <div>
                       <p className="text-[14px] font-medium text-td">{n.label}</p>
                       <p className="text-[12px] text-tl">{n.desc}</p>
                     </div>
-                    <div className="w-11 h-6 bg-p rounded-full flex-shrink-0" />
+                    <button
+                      onClick={() => setNotifOn(prev => prev.map((v, j) => j === i ? !v : v))}
+                      className={`relative w-11 h-6 rounded-full flex-shrink-0 transition-colors duration-200 ${notifOn[i] ? "bg-p" : "bg-bw"}`}
+                    >
+                      <span className={`absolute top-[4px] w-[16px] h-[16px] rounded-full bg-white shadow transition-all duration-200 ${notifOn[i] ? "left-[22px]" : "left-[4px]"}`} />
+                    </button>
                   </div>
                 ))}
               </div>
