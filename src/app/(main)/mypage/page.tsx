@@ -1,10 +1,10 @@
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import Sidebar from "@/components/Sidebar";
 import { HIRE_RECORDS, CATS } from "@/lib/mock";
 import Badge from "@/components/Badge";
-import { useState, Suspense } from "react";
+import { useState } from "react";
 
 const PAYMENT_RECORDS = [
   { id: "1", catName: "치즈", spec: "해충박멸", date: "2026.04.05", amount: 35000, method: "카드결제", status: "결제완료" },
@@ -28,14 +28,10 @@ const CAT_RATINGS = [
   { catName: "고등어", spec: "쥐퇴치", date: "03.10", avg: 3.8 },
 ];
 
-function MyPageInner() {
+export default function MyPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { logout } = useStore();
-  const [activeIdx, setActiveIdx] = useState(() => {
-    const t = searchParams.get("tab");
-    return t ? parseInt(t, 10) : 0;
-  });
+  const [activeIdx, setActiveIdx] = useState(0);
 
   const handleLogout = () => {
     logout();
@@ -317,6 +313,4 @@ function MyPageInner() {
   );
 }
 
-export default function MyPage() {
-  return <Suspense><MyPageInner /></Suspense>;
-}
+
