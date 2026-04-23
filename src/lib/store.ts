@@ -23,6 +23,9 @@ type Store = {
 
   chatInput: string;
   setChatInput: (v: string) => void;
+
+  favoritedCatIds: string[];
+  unfavoriteCat: (id: string) => void;
 };
 
 export const useStore = create<Store>((set) => ({
@@ -47,4 +50,7 @@ export const useStore = create<Store>((set) => ({
 
   chatInput: "",
   setChatInput: (v) => set({ chatInput: v }),
+
+  favoritedCatIds: ["1", "2", "3", "4", "5", "6"],
+  unfavoriteCat: (id) => set((s) => ({ favoritedCatIds: s.favoritedCatIds.filter((i) => i !== id) })),
 }));

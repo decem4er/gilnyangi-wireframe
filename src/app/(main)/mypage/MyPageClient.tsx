@@ -37,7 +37,7 @@ const NOTIF_ITEMS = [
 
 export default function MyPageClient() {
   const router = useRouter();
-  const { logout } = useStore();
+  const { logout, favoritedCatIds, unfavoriteCat } = useStore();
   const [activeIdx, setActiveIdx] = useState(0);
   const [notifOn, setNotifOn] = useState([true, true, true, true]);
 
@@ -71,7 +71,7 @@ export default function MyPageClient() {
               {[
                 { label: "총 고용", value: "45" },
                 { label: "진행 중", value: "3" },
-                { label: "찜한 냥이", value: "5" },
+                { label: "찜한 냥이", value: String(favoritedCatIds.length) },
                 { label: "총 지출", value: "₩132K" },
               ].map((s, i, arr) => (
                 <div key={s.label} className={`flex-1 flex flex-col items-center gap-2 py-5 ${i < arr.length - 1 ? "border-r border-bw" : ""}`}>
@@ -136,14 +136,23 @@ export default function MyPageClient() {
               <div className="flex-1 flex flex-col gap-[14px] p-6 overflow-y-auto">
                 <h2 className="text-[18px] font-bold text-td flex-shrink-0">찜한 냥이</h2>
                 <div className="flex flex-wrap gap-[14px]">
-                  {CATS.slice(0, 5).map((cat) => (
+                  {CATS.filter((c) => favoritedCatIds.includes(c.id)).slice(0, 5).map((cat) => (
                     <div
                       key={cat.id}
-                      onClick={() => router.push(`/cats/${cat.id}`)}
-                      className="bg-white flex flex-col items-center gap-2 p-[14px] rounded-[14px] cursor-pointer hover:brightness-97 transition-all"
+                      className="bg-white flex flex-col items-center gap-2 p-[14px] rounded-[14px] relative group"
                     >
-                      <div className="w-16 h-16 rounded-full bg-av" />
-                      <p className="text-[14px] font-medium text-td">{cat.name}</p>
+                      <div
+                        onClick={() => router.push(`/cats/${cat.id}`)}
+                        className="flex flex-col items-center gap-2 cursor-pointer hover:brightness-97 transition-all"
+                      >
+                        <div className="w-16 h-16 rounded-full bg-av" />
+                        <p className="text-[14px] font-medium text-td">{cat.name}</p>
+                      </div>
+                      <button
+                        onClick={() => unfavoriteCat(cat.id)}
+                        className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-white text-red text-[12px] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red hover:text-white shadow-sm"
+                        title="찜 해제"
+                      >✕</button>
                     </div>
                   ))}
                 </div>
@@ -184,20 +193,33 @@ export default function MyPageClient() {
               <h1 className="text-[22px] font-bold text-td">찜한 냥이</h1>
             </div>
             <div className="flex-1 overflow-y-auto px-10 py-6">
-              <div className="flex flex-wrap gap-4">
-                {CATS.slice(0, 6).map((cat) => (
-                  <div key={cat.id} className="bg-white flex flex-col items-center gap-[10px] p-[14px] rounded-[14px]">
-                    <div className="w-[68px] h-[68px] rounded-full bg-av" />
-                    <p className="text-[14px] font-medium text-td">{cat.name}</p>
-                    <button
-                      onClick={() => router.push(`/cats/${cat.id}`)}
-                      className="bg-p text-white text-[12px] font-medium px-3 h-7 rounded-[14px] hover:brightness-105 transition-all"
-                    >
-                      고용
-                    </button>
-                  </div>
-                ))}
-              </div>
+              {favoritedCatIds.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full gap-3 text-tl">
+                  <span className="text-[40px]">🐱</span>
+                  <p className="text-[15px]">찜한 냥이가 없습니다</p>
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-4">
+                  {CATS.filter((c) => favoritedCatIds.includes(c.id)).map((cat) => (
+                    <div key={cat.id} className="bg-white flex flex-col items-center gap-[10px] p-[14px] rounded-[14px] w-[120px]">
+                      <div className="w-[68px] h-[68px] rounded-full bg-av" />
+                      <p className="text-[14px] font-medium text-td text-center">{cat.name}</p>
+                      <button
+                        onClick={() => router.push(`/cats/${cat.id}`)}
+                        className="bg-p text-white text-[12px] font-medium px-3 h-7 rounded-[14px] hover:brightness-105 transition-all w-full"
+                      >
+                        고용
+                      </button>
+                      <button
+                        onClick={() => unfavoriteCat(cat.id)}
+                        className="text-[12px] text-tl hover:text-red transition-colors"
+                      >
+                        ♥ 찜 해제
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </>
         )}
